@@ -611,8 +611,7 @@ function readyToProgress(tmpl, logged) {
   if (!logged || tmpl.kind === "check") return false;
   const done = logged.sets.filter(x => x.done);
   if (done.length < tmpl.sets.length) return false;
-  const top = topSet(logged);
-  return done.every(x => Number(x.r) >= upAt(tmpl, top ? Number(top.w) : 0));
+  return done.every(x => Number(x.r) >= tmpl.repMax);
 }
 function topSet(e) {
   let best = null;
@@ -766,8 +765,8 @@ function holdHTML() {
   if (!hold) return "";
   const now = Date.now(), sw = hold.gapUntil && now < hold.gapUntil, left = hold.paused ? hold.left : sw ? hold.sec * 1000 : Math.max(0, hold.endAt - now);
   return `<div class="hold" id="hold"><div class="row between"><span class="hold-clock num">${sw ? "Switch sides" : mmss(Math.ceil(left / 1000))}</span><span class="muted small">${hold.sides > 1 ? `Side ${hold.side} of 2` : "Hold"}</span></div>
-    <div class="bar"><i style="width:${sw ? 0 : (100 - left / (hold.sec * 10)).toFixed(1)}%"></i></div>
-    <div class="row" style="gap:8px;margin-top:10px"><button class="btn sm grow" data-act="holdPause">${hold.paused ? "Resume" : "Pause"}</button><button class="btn sm ghost" data-act="holdStop">Stop</button></div></div>`;
+    <div class="bar"><i style="width:${sw ? 0 : Math.max(0, 100 - left / (hold.sec * 10)).toFixed(1)}%"></i></div>
+    <div class="row" style="gap:8px;margin-top:10px"><button class="btn sm" data-act="holdAdd" data-s="-10">−10</button><button class="btn sm grow" data-act="holdPause">${hold.paused ? "Resume" : "Pause"}</button><button class="btn sm" data-act="holdAdd" data-s="10">+10</button><button class="btn sm ghost" data-act="holdStop">Stop</button></div></div>`;
 }
 function checkItems(items, done, cues, act, quick, list) {
   return `<ul class="check-list">${items.map((m, i) => quick && !m.quick ? "" : `<li class="mob"><button class="cb ${done[i] ? "on" : ""}" data-act="${act}" data-i="${i}" aria-label="Done">${done[i] ? I.checkSm : ""}</button><div class="grow"><button class="mob-name" data-act="${act}Cue" data-i="${i}" aria-expanded="${!!cues[i]}"><span>${esc(m.name)}</span><span class="muted num">${esc(m.dose || "")}</span></button>${cues[i] && m.cue ? `<div class="mob-cue">${esc(m.cue)}</div>` : ""}${hold && list && hold.list === list && hold.i === i ? holdHTML() : ""}</div>${list && holdSpec(m) ? `<button class="play-btn ${hold && hold.list === list && hold.i === i ? "on" : ""}" data-act="holdGo" data-l="${list}" data-i="${i}" aria-label="Start timer">${I.play}</button>` : ""}</li>`).join("")}</ul>`;
@@ -861,8 +860,7 @@ function viewToday() {
    lowered weight was dropped last time: hold it and rebuild reps */
 /* Weights you can actually load: everything moves in whole jumps (5 lb total; a pair of dumbbells going up 2.5 each is +5). */
 const snap = (w, inc) => Math.max(0, Math.round(w / inc) * inc);
-/* On light lifts one jump is a big % change, so earn it with 2 extra reps first. */
-const upAt = (t, w) => t.repMax + (t.repMax <= 15 && w > 0 && incFor(t) / w >= 0.1 && !(t.tags || []).includes("strength") ? 2 : 0);
+/* After a break: a lighter weight, rounded down to a loadable jump. */
 const lighter = (w, f, inc) => w <= inc ? w : Math.max(inc, Math.floor(w * f / inc) * inc);
 function advice(t, name, excludeId) {
   if (!t || (t.kind || "weight") !== "weight") return null;
@@ -886,7 +884,7 @@ function advice(t, name, excludeId) {
   if (h.length >= 2) {
     const prevTop = topSet(h[h.length - 2].ex);
     if (prevTop && Number(prevTop.w) > tw) return { kind: "lowered", from: Number(prevTop.w), to: tw,
-      msg: `You dropped from ${fmtNum(prevTop.w)} to ${fmtNum(tw)} ${U()}. Stay at ${fmtNum(tw)} until every set hits ${upAt(t, tw)}, then go up again.` };
+      msg: `You dropped from ${fmtNum(prevTop.w)} to ${fmtNum(tw)} ${U()}. Stay at ${fmtNum(tw)} until every set hits ${t.repMax}, then go up again.` };
   }
   return null;
 }
@@ -978,8 +976,7 @@ function exerciseCard(dex, ei) {
   const open = !!ui.cuesOpen[ei];
   const inc = incFor(t);
   const doneNow = dex.sets.filter(s => s.done);
-  const nowTop = Math.max(0, ...dex.sets.map(s => Number(s.w) || 0)), lastTop = last && topSet(last.ex) ? Number(topSet(last.ex).w) : 0;
-  const need = kind === "weight" ? upAt(t, nowTop || lastTop) : t.repMax;
+  const need = t.repMax;
   const allTopNow = kind !== "check" && doneNow.length >= dex.sets.length && doneNow.every(s => Number(s.r || s.ph) >= need);
   const belowNow = kind === "weight" ? doneNow.filter(s => Number(s.r || s.ph) < t.repMin).length : 0;
   const allDone = doneNow.length === dex.sets.length && dex.sets.length;
@@ -998,7 +995,7 @@ function exerciseCard(dex, ei) {
       ${t.note && kind !== "check" ? `<div class="k" style="margin-top:10px">Note</div><div>${esc(t.note)}</div>` : ""}
       ${tagDots(t.tags) ? `<div class="row wrapf" style="margin-top:10px;gap:6px">${tagDots(t.tags)}</div>` : ""}</div>`;
   }
-  if (kind === "weight") h += `<div class="rule">${I.up}<span>Go up when every set hits <b>${need}</b> reps, then add <b>${fmtNum(inc)} ${U()}</b>.${need > t.repMax ? ` <span class="faint">+2 reps first: ${fmtNum(inc)} ${U()} is a big jump here.</span>` : ""}</span></div>`;
+  if (kind === "weight") h += `<div class="rule">${I.up}<span>Go up when every set hits <b>${need}</b> reps, then add <b>${fmtNum(inc)} ${U()}</b>.</span></div>`;
   if (last && kind !== "check") h += `<div class="rule faint num" style="margin-top:4px">Last ${fmtDate(last.session.date)}: ${esc(setsSummary(last.ex))}</div>`;
   if (adv) h += `<div class="hint ${adv.kind === "up" ? "" : "down"}">${adv.kind === "up" ? I.up : I.down}<span>${esc(adv.msg)}</span></div>`;
   if (belowNow) h += `<div class="hint down">${I.down}<span>${pl(belowNow, "set")} under ${t.repMin} reps today. Drop ${fmtNum(inc)} ${U()} on ${belowNow === 1 ? "it" : "them"} next time.</span></div>`;
@@ -1312,7 +1309,7 @@ function liftProgress(name) {
     h += `<div class="tiles" style="margin-top:12px;margin-bottom:4px">
       <div class="tile" style="background:var(--surface-2)"><div class="k">Top set now</div><div class="v">${fmtNum(lastp.top)}<span class="muted" style="font-size:14px"> × ${lastp.topR ?? "–"}</span></div><div class="d">${first !== lastp && first.top ? `${lastp.top - first.top >= 0 ? "+" : ""}${fmtNum(lastp.top - first.top)} ${U()} since start` : "first entry"}</div></div>
       <div class="tile" style="background:var(--surface-2)"><div class="k">Best est. 1RM</div><div class="v">${fmtNum(bestE)}</div><div class="d">heaviest ${fmtNum(bestW)} ${U()}</div></div></div>`;
-    if (tmpl) h += `<div class="rule">${I.up}<span>Go up when every set hits ${upAt(tmpl, lastp.top)} reps, then add ${fmtNum(incFor(tmpl))} ${U()}.</span></div>`;
+    if (tmpl) h += `<div class="rule">${I.up}<span>Go up when every set hits ${tmpl.repMax} reps, then add ${fmtNum(incFor(tmpl))} ${U()}.</span></div>`;
     if (span > 90) h += `<div class="row" style="justify-content:flex-end;margin-top:12px">${rangeSeg("progRange", rng)}</div>`;
     const topT = thin(pts.filter(p => p.top).map(p => ({ x: p.date, y: p.top }))), e1T = thin(pts.filter(p => p.e1).map(p => ({ x: p.date, y: p.e1 })));
     h += chart([
@@ -1627,7 +1624,7 @@ function toast(msg) { let el = document.querySelector(".toast"); if (!el) { el =
 function timerHTML() {
   if (!timer) return "";
   const left = Math.round((timer.end - Date.now()) / 1000), over = left <= 0, t = Math.abs(left);
-  return `<div class="timer ${over ? "over" : ""}" id="timer"><span>${over ? "Go · +" : "Rest "}${mmss(t)}</span><button data-act="tAdd">+30s</button><button data-act="tStop">${over ? "Dismiss" : "Skip"}</button></div>`;
+  return `<div class="timer ${over ? "over" : ""}" id="timer"><span>${over ? "Go · +" : "Rest "}${mmss(t)}</span>${over ? "" : `<button data-act="tAdd" data-s="-10">−10</button>`}<button data-act="tAdd" data-s="10">+10</button><button data-act="tStop">${over ? "Dismiss" : "Skip"}</button></div>`;
 }
 let buzzed = false, lastSeg = -1;
 setInterval(() => {
@@ -1656,8 +1653,6 @@ setInterval(() => {
     const el = document.getElementById("ctimer"); if (el) el.outerHTML = ctimerHTML();
   }
 }, 500);
-/* Sound. iOS only lets a page play audio after a tap, and Web Audio follows the ring/silent switch unless the
-   session is "playback". So: unlock on the first touch, ask for playback, and resume the context before each beep. */
 
 /* Alert sounds. iPhones only let a page play sound after a tap, so the clips are unlocked on the first tap.
    Each beep is a short audio clip that holds the audio only while it plays:
@@ -1671,8 +1666,8 @@ function beepURL(n) {
   v.setUint32(24, sr, true); v.setUint32(28, sr * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); str(36, "data"); v.setUint32(40, len * 2, true);
   for (let i = 0; i < len; i++) {
     const t = i / sr, k = Math.floor(t / 0.3), lt = t - k * 0.3, f = k === n - 1 && n > 1 ? 1175 : 880;
-    const env = k >= n ? 0 : lt < 0.02 ? lt / 0.02 : lt < 0.25 ? Math.exp(-(lt - 0.02) * 9) : 0;
-    v.setInt16(44 + i * 2, Math.sin(2 * Math.PI * f * t) * env * 0.6 * 32767, true);
+    const env = k >= n ? 0 : lt < 0.01 ? lt / 0.01 : lt < 0.26 ? Math.exp(-(lt - 0.01) * 4) : 0, w = 2 * Math.PI * f * t;
+    v.setInt16(44 + i * 2, Math.max(-1, Math.min(1, (Math.sin(w) + 0.25 * Math.sin(3 * w)) * 0.65)) * env * 32767, true);
   }
   return URL.createObjectURL(new Blob([v], { type: "audio/wav" }));
 }
@@ -1694,7 +1689,7 @@ function alertCue(n = 2) {
   setSession();
   try { a.muted = false; a.currentTime = 0; const p = a.play(); if (p) p.catch(() => {}); } catch (e) {}
 }
-const startTimer = sec => { if (sec) { timer = { end: Date.now() + sec * 1000 }; buzzed = false; } };
+const startTimer = sec => { if (sec) { timer = { end: Date.now() + sec * 1000 }; buzzed = false; alertCue(1); } };
 let wakeLock = null;
 const wantAwake = () => !!draft && (draft.type !== "cardio" || draft.clock.running);
 async function keepAwake(on) { try { if (on && navigator.wakeLock && !wakeLock) wakeLock = await navigator.wakeLock.request("screen"); else if (!on && wakeLock) { await wakeLock.release(); wakeLock = null; } } catch (e) { wakeLock = null; } }
@@ -1726,6 +1721,7 @@ document.addEventListener("click", ev => {
     case "mobToggle": ui.mobOpen = !ui.mobOpen; render(); break;
     case "mob": draft.mob = draft.mob || []; draft.mob[Number(ds.i)] = !draft.mob[Number(ds.i)]; { const ml = dayById(draft.dayId).mobility || []; if (ml.every((m, i) => (ui.mobQuick && !m.quick) || draft.mob[i])) ui.mobOpen = false; } saveDraft(); render(); break;
     case "holdGo": if (hold && hold.list === ds.l && hold.i === Number(ds.i)) { hold = null; render(); } else startHold(ds.l, Number(ds.i)); break;
+    case "holdAdd": if (hold) { const ms = Number(ds.s) * 1000; if (hold.paused) hold.left = Math.max(1000, hold.left + ms); else if (!hold.gapUntil) hold.endAt = Math.max(Date.now() + 1000, hold.endAt + ms); render(); } break;
     case "holdPause": if (hold) { if (hold.paused) { hold.endAt = Date.now() + hold.left; hold.paused = false; } else { hold.left = Math.max(0, hold.endAt - Date.now()); hold.paused = true; } render(); } break;
     case "holdStop": hold = null; render(); break;
     case "mobQuick": ui.mobQuick = !ui.mobQuick; render(); break;
@@ -1751,7 +1747,7 @@ document.addEventListener("click", ev => {
       break;
     }
     case "discard": ask(draft.editing ? "Stop editing? Changes won't be saved." : "Discard this session?", draft.editing ? "Stop editing" : "Discard", () => { draft = null; timer = null; saveDraft(); keepAwake(false); render(); }); break;
-    case "tAdd": if (timer) { timer.end = Math.max(timer.end, Date.now()) + 30000; buzzed = false; render(); } break;
+    case "tAdd": if (timer) { const now = Date.now(); timer.end = Math.max(timer.end, now) + Number(ds.s) * 1000; if (timer.end > now) buzzed = false; render(); } break;
     case "tStop": timer = null; render(); break;
     case "cToggle": { const c = draft.clock; if (c.running) { c.acc += Date.now() - c.since; c.running = false; keepAwake(false); } else { c.since = Date.now(); c.running = true; lastSeg = segAt(dayById(draft.dayId), clockSec()).i; alertCue(); keepAwake(true); } saveDraft(); render(); break; }
     case "cReset": draft.clock = { running: false, acc: 0, since: 0 }; lastSeg = -1; saveDraft(); keepAwake(false); render(); break;
