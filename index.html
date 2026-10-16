@@ -1671,27 +1671,29 @@ function beepURL(n) {
   }
   return URL.createObjectURL(new Blob([v], { type: "audio/wav" }));
 }
-const beeps = {};
-function beepEl(n) { if (!beeps[n]) { try { beeps[n] = new Audio(beepURL(n)); beeps[n].preload = "auto"; } catch (e) { return null; } } return beeps[n]; }
+/* One clip of three beeps, unlocked on a tap and reused for every alert (cut short for 1 or 2 beeps).
+   Reusing the element that was unlocked is what iOS reliably lets play later from a timer. */
+let beepA = null, beepStop = 0, audioUnlocked = false, alerting = false;
+function beepEl() { if (!beepA) { try { beepA = new Audio(beepURL(3)); beepA.preload = "auto"; } catch (e) {} } return beepA; }
 function setSession() { try { if (navigator.audioSession) navigator.audioSession.type = S.settings.sound === "loud" ? "playback" : "transient"; } catch (e) {} }
-let audioUnlocked = false;
 function unlockAudio() {
-  if (audioUnlocked) return; audioUnlocked = true;
-  setSession();
-  for (const n of [1, 2, 3]) { const a = beepEl(n); if (!a) continue; a.muted = true; const p = a.play(); if (p) p.then(() => { a.pause(); a.currentTime = 0; a.muted = false; }).catch(() => { a.muted = false; audioUnlocked = false; }); }
-  if (audioUnlocked) ["touchend", "click"].forEach(t => document.removeEventListener(t, unlockAudio));
+  const a = beepEl(); if (!a || audioUnlocked) return;
+  setSession(); a.muted = true;
+  const p = a.play(); if (!p) return;
+  p.then(() => { if (!alerting) { a.pause(); a.currentTime = 0; } a.muted = false; audioUnlocked = true; ["touchend", "click"].forEach(t => document.removeEventListener(t, unlockAudio)); })
+   .catch(() => { a.muted = false; }); // try again on the next tap
 }
 ["touchend", "click"].forEach(t => document.addEventListener(t, unlockAudio, { passive: true }));
 function alertCue(n = 2) {
-  try { navigator.vibrate && navigator.vibrate([200, 100, 200]); } catch (e) {}
   if (S.settings.sound === "off") return;
-  const a = beepEl(Math.min(3, Math.max(1, n))); if (!a) return;
-  setSession();
+  const a = beepEl(); if (!a) return;
+  setSession(); clearTimeout(beepStop); alerting = true;
   try { a.muted = false; a.currentTime = 0; const p = a.play(); if (p) p.catch(() => {}); } catch (e) {}
+  beepStop = setTimeout(() => { alerting = false; if (n < 3) a.pause(); }, Math.min(3, Math.max(1, n)) * 300 + 40);
 }
 const startTimer = sec => { if (sec) { timer = { end: Date.now() + sec * 1000 }; buzzed = false; alertCue(1); } };
 let wakeLock = null;
-const wantAwake = () => !!draft && (draft.type !== "cardio" || draft.clock.running);
+const wantAwake = () => !!hold || (!!draft && (draft.type !== "cardio" || draft.clock.running));
 async function keepAwake(on) { try { if (on && navigator.wakeLock && !wakeLock) wakeLock = await navigator.wakeLock.request("screen"); else if (!on && wakeLock) { await wakeLock.release(); wakeLock = null; } } catch (e) { wakeLock = null; } }
 
 /* ---------- events ---------- */
