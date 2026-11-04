@@ -79,7 +79,8 @@ label.lbl{display:block;font-size:12px;color:var(--muted);font-weight:600;margin
 .chip.on{background:var(--accent-soft);color:var(--accent)}
 .chip{display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px;border-radius:999px;font-size:11.5px;font-weight:650;background:var(--surface-2);color:var(--muted)}
 .dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:none}
-nav.tabs{position:fixed;left:0;right:0;bottom:0;background:color-mix(in srgb,var(--surface) 90%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:20}
+body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:25}
+nav.tabs{transform:translateZ(0);position:fixed;left:0;right:0;bottom:0;background:color-mix(in srgb,var(--surface) 90%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:20}
 nav.tabs .in{max-width:680px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
 nav.tabs button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 0 8px;font-size:11px;font-weight:600;color:var(--faint)}
 nav.tabs button.on{color:var(--text)}
@@ -93,7 +94,7 @@ nav.tabs svg{width:22px;height:22px}
 .badge{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:750;color:#fff;flex:none;font-size:17px}
 .hero{padding:20px}
 .hero .disp{font-size:26px;font-weight:750;margin:2px 0 4px;line-height:1.1}
-.sess-head{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);margin:0 -16px 12px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.sess-head{transform:translateZ(0);position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);margin:0 -16px 12px;padding:12px 16px;border-bottom:1px solid var(--line)}
 .ex-head{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left}
 .ex-title{font-family:var(--display);font-size:18px;font-weight:650;margin:0;line-height:1.2}
 .meta{font-size:13px;color:var(--muted);margin-top:3px}
@@ -154,7 +155,7 @@ nav.tabs svg{width:22px;height:22px}
 .play-btn.on{background:var(--accent);color:var(--accent-ink)}
 .play-btn svg{width:14px;height:14px}
 .hold{margin:8px 0 4px;padding:12px;border-radius:12px;background:var(--surface-2)}
-.hold-clock{font-family:var(--display);font-size:30px;font-weight:750;line-height:1}
+.hold-clock{font-family:var(--display);font-size:30px;font-weight:750;line-height:1;font-variant-numeric:tabular-nums}
 .hold .bar{height:5px;border-radius:5px;background:var(--line);overflow:hidden;margin-top:10px}
 .hold .bar i{display:block;height:100%;background:var(--accent);transition:width .45s linear}
 .ex-done .tick.part{background:var(--surface-2);color:var(--muted);font-size:11px;font-weight:700}
@@ -168,7 +169,8 @@ nav.tabs svg{width:22px;height:22px}
 .ctimer .seg-name{font-family:var(--display);font-size:22px;font-weight:700;margin-top:6px}
 .ctimer .clock{font-family:var(--display);font-size:64px;font-weight:750;line-height:1;margin:10px 0 6px;font-variant-numeric:tabular-nums;letter-spacing:-.03em}
 .ctimer .bar{height:6px;border-radius:6px;background:var(--surface-2);overflow:hidden;margin:14px 0 6px}
-.ctimer .bar i{display:block;height:100%;background:var(--accent);border-radius:6px}
+.ctimer .bar i{display:block;height:100%;background:var(--accent);border-radius:6px;transition:width .5s linear}
+.ctimer .clock{transition:color .3s}
 .ctimer.Hard .clock{color:var(--bad)}.ctimer.Moderate .clock{color:var(--warn)}
 .seg-list{margin-top:6px;max-height:300px;overflow:auto}
 .seg-row{display:grid;grid-template-columns:52px 1fr auto;gap:10px;padding:7px 4px;border-top:1px solid var(--line);font-size:13px;align-items:center}
@@ -240,7 +242,13 @@ table.t th{font-size:11px;color:var(--muted);font-weight:650;text-transform:uppe
 @media(min-width:700px){.scrim{align-items:center}.sheet{border-radius:22px}}
 .sheet h2{margin:0 0 4px;font-size:22px}
 @keyframes fade{from{opacity:0}}@keyframes up{from{transform:translateY(24px);opacity:.6}}
-@media (prefers-reduced-motion:reduce){.scrim,.sheet{animation:none}.toggle,.toggle::after{transition:none}}
+@keyframes pill{from{transform:translate(-50%,14px);opacity:0}}
+.timer{overflow:hidden;animation:pill .22s ease-out;transition:background .3s,color .3s}
+.timer .tline{position:absolute;left:0;bottom:0;height:3px;background:var(--accent);border-radius:0 3px 3px 0;transition:width .5s linear}
+.hold{animation:fade .2s}
+.btn,.icon-btn,.play-btn,.cb,.seg button,.timer button,.lift-row,.bwcal button,.bwmonths button{transition:transform .12s ease,background-color .2s,opacity .2s}
+.btn:active,.icon-btn:active,.play-btn:active,.cb:active,.seg button:active,.timer button:active,.bwcal button:active,.bwmonths button:active{transform:scale(.95)}
+@media (prefers-reduced-motion:reduce){.scrim,.sheet,.timer,.hold{animation:none}.toggle,.toggle::after,.btn,.icon-btn,.play-btn,.cb,.seg button,.timer button,.timer .tline,.hold .bar i{transition:none}}
 .toast{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:600;font-size:14px;z-index:60;max-width:calc(100% - 32px)}
 .prog-ex{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
 .prog-ex:first-of-type{border-top:0}
@@ -285,6 +293,19 @@ const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 let _uid = 0;
 const uid = (p = "x") => p + Date.now().toString(36) + (_uid++).toString(36) + Math.random().toString(36).slice(2, 6);
 const M = "Moderate", E = "Easy", H = "Hard";
+
+/* Fuller form cues for the harder lifts: [original cues it replaces, new cues, where you should feel it]. */
+const CUES = {
+  "Incline Barbell Bench Press": ["Feet planted|Chest up|Brace before every rep", ["Feet planted, glutes on the bench", "Shoulder blades pinched back and down", "Brace before every rep", "Bar to upper chest, wrists over elbows", "2 s down, press up and slightly back"], "Upper chest and front delts, not your neck"],
+  "Seated Dumbbell Shoulder Press": ["Brace abs|Elbows slightly forward|Don't arch lower back", ["Ribs down, abs braced", "Elbows slightly forward", "Lower to chin height under control", "Press up and slightly in", "Don't arch your lower back"], "Front and side delts"],
+  "Romanian Deadlift": ["Hips back|Brace first|Bar close to legs", ["Brace first, chest proud", "Soft knees, shins stay vertical", "Push hips back, bar slides down your legs", "Stop at a big hamstring stretch, back flat", "Stand up by squeezing glutes, don't lean back"], "Hamstrings and glutes, never your lower back"],
+  "Neutral-Grip Lat Pulldown": ["Drive elbows to ribs|Chest tall|Control the return", ["Slight lean back, ribs down", "Drive elbows down to your ribs", "Bar to upper chest", "Full stretch at the top without shrugging"], "Lats, under your armpits"],
+  "Chest-Supported Row": ["Pull with elbows|Squeeze shoulder blades|Don't shrug", ["Chest glued to the pad", "Pull with elbows, about 45° out", "Squeeze shoulder blades for 1 s", "Full reach forward each rep", "Don't shrug"], "Mid back and rear delts"],
+  "Cable Face Pull": ["Rope to forehead|Elbows high|Rotate hands back", ["Cable at forehead height", "Thumbs pointing back", "Ribs down, no back arch", "Pull to your eyes: hands beside ears, elbows high", "1 s hold, 2 s return"], "Rear delts and mid back, not biceps, neck, traps or lower back"],
+  "Barbell Hip Thrust": ["Chin tucked|Ribs down|Squeeze glutes", ["Bench under your shoulder blades", "Chin tucked, ribs down", "Drive through your heels", "Shins vertical at the top", "Lock out with glutes, not your lower back"], "Glutes, not your lower back or quads"],
+  "Bulgarian Split Squat": ["Push through whole foot|Control the descent|Stay balanced", ["Front foot far enough that the knee tracks over the toes", "Slight forward lean", "Back leg is only for balance", "Control the descent", "Drive up through the front heel"], "Front glute and quad"],
+  "Leg Press": ["Full range|Controlled lowering", ["Lower back flat on the pad", "Knees track over your toes", "Controlled lowering", "Stop before your hips curl up"], "Quads and glutes"],
+};
 
 /* ---------- default program ---------- */
 function ex(name, tags, repMin, repMax, restSec, ints, cues, pause, extra = {}) {
@@ -340,7 +361,7 @@ function defaultProgram() {
       "Hard sets should finish with ~1 rep left in the tank (RIR 1). Never train to failure.",
       "If BJJ sparring was especially hard that day, turn every Hard set into a Moderate set.",
     ],
-    mobV: 2, schedV: 1, incV: 1, calfV: 1,
+    mobV: 2, schedV: 1, incV: 1, calfV: 1, gripV: 0, cueV: 0, fpV: 1,
     days: [
       {
         id: "push", type: "lift", name: "Push", subtitle: "Chest · Shoulders · Triceps", color: 0, weekday: 3,
@@ -486,6 +507,19 @@ function migrate() {
     for (const d of S.program.days) for (const e of (d.exercises || [])) if (e.name === "Seated Calf Raise" && e.repMin === 12 && e.repMax === 20) { e.repMin = 10; e.repMax = 12; }
     S.program.calfV = 1; changed = true;
   }
+  if ((S.program.gripV || 0) < 1) { // grip finisher at the end of Pull, logged in seconds
+    const d = S.program.days.find(x => x.id === "pull");
+    if (d && !d.exercises.some(e => /hang|farmer/i.test(e.name))) d.exercises.push(ex("Dead Hang", ["grip"], 30, 60, 90, [M, M, H], ["Shoulders packed, not shrugged", "Squeeze the bar hard", "Towel over the bar if you can"], "Hold as long as you can", { kind: "reps", unit: "s", alts: ["Farmer Carry"], note: "Farmer carry instead: heavy, 30–40 s per set" }));
+    S.program.gripV = 1; changed = true;
+  }
+  if ((S.program.cueV || 0) < 1) {
+    for (const d of S.program.days) for (const e of (d.exercises || [])) { const c = CUES[e.name]; if (c && (e.cues || []).join("|") === c[0]) { e.cues = c[1].slice(); e.feel = c[2]; } }
+    S.program.cueV = 1; changed = true;
+  }
+  if ((S.program.fpV || 0) < 1) { // face pulls reset to 40 lb with better form (Nov 2026), used once
+    for (const d of S.program.days) for (const e of (d.exercises || [])) if (e.name === "Cable Face Pull") e.nextW = 40;
+    S.program.fpV = 1; changed = true;
+  }
   if (!S.program.stretch) { S.program.stretch = defaultStretch(); changed = true; }
   if (!S.program.bjj) { S.program.bjj = defaultBJJ(); changed = true; }
   if (!Array.isArray(S.stretchLog)) S.stretchLog = [];
@@ -496,6 +530,8 @@ function migrate() {
 
 /* ---------- state + storage ---------- */
 let S;
+/* Lookups over all sessions are built once and reused until the data changes (saveLocal clears them), so screens stay quick with years of logs. Callers never mutate the results. */
+let memo = {};
 try { S = JSON.parse(localStorage.getItem(LS_KEY)) || null; } catch (e) { S = null; }
 /* Snapshot of Alex's logs, used only the first time the app opens with empty storage (a fresh home-screen install). */
 const SEED = {"v": 2, "program": {"bjj": {"name": "BJJ warm-up", "note": "Warm, fast and ready, not tired.", "sections": [{"items": [{"cue": "Stance switches, level changes, hand fighting, light sprawls. Nose breathing, light sweat, calm rhythm.", "dose": "2 min", "name": "Shadow grappling"}], "time": "2 min", "title": "Heat"}, {"items": [{"cue": "Smooth, active range, no forcing.", "dose": "10 reps", "name": "Hip switches"}, {"cue": "", "dose": "10 reps", "name": "Shoulder rolls + reach"}, {"cue": "", "dose": "6 reps", "name": "Deep squat pry → stand"}], "time": "1–2 min", "title": "Mobility"}, {"items": [{"cue": "Knees over feet, hips level.", "dose": "8 steps each way", "name": "Band lateral walks"}, {"cue": "Fast up, slow down, glutes only.", "dose": "8–10 reps", "name": "Band glute bridges"}, {"cue": "Upper back starts it. Don't shrug.", "dose": "10–12 reps", "name": "Band pull-aparts"}], "time": "3 min", "title": "Activation"}, {"items": [{"cue": "Straight body, moderate effort, no pain.", "dose": "2 × 10–15 s/side", "name": "Copenhagen plank (knee)"}, {"cue": "Sit into the hip, push back up, knee over foot.", "dose": "5/side", "name": "Lateral lunges"}], "time": "3 min", "title": "Groin prep"}, {"items": [{"cue": "", "dose": "5/side", "name": "Technical stand-ups"}, {"cue": "", "dose": "~10 m total", "name": "Shrimping"}, {"cue": "Smooth, explosive, no fatigue.", "dose": "5 reps", "name": "Sprawl → recover"}], "time": "2–3 min", "title": "Grappling prep"}, {"items": [{"cue": "", "dose": "6 reps", "name": "Deep squat hold → stand"}, {"cue": "", "dose": "", "name": "Arm swings or light pummeling"}], "time": "1 min", "title": "Finish"}]}, "days": [{"color": 2, "exercises": [{"alts": [], "cues": ["Chin tucked", "Ribs down", "Squeeze glutes"], "id": "emurqknwi1ignrw", "kind": "weight", "name": "Barbell Hip Thrust", "note": "", "pause": "2 sec at top", "perSide": false, "repMax": 8, "repMin": 6, "restSec": 150, "sets": [{"int": "Moderate", "note": ""}, {"int": "Moderate", "note": ""}, {"int": "Hard", "note": ""}, {"int": "Moderate", "note": "Back-off"}], "tags": ["strength", "posture"]}, {"alts": [], "cues": ["Push through whole foot", "Control the descent", "Stay balanced"], "id": "emurqknwi1j0593", "kind": "weight", "name": "Bulgarian Split Squat", "note": "", "pause": "1 sec at bottom", "perSide": true, "repMax": 10, "repMin": 8, "restSec": 90, "sets": [{"int": "Moderate", "note": ""}, {"int": "Moderate", "note": ""}, {"int": "Hard", "note": ""}], "tags": ["strength"]}, {"alts": ["Seated Leg Curl"], "cues": ["Full range", "Controlled lowering"], "id": "emurqknwi1kbrwr", "kind": "weight", "name": "Leg Press", "note": "Week A: Leg Press · Week B: Seated Leg Curl", "pause": "", "perSide": false, "repMax": 12, "repMin": 10, "restSec": 90, "sets": [{"int": "Moderate", "note": ""}, {"int": "Moderate", "note": ""}, {"int": "Hard", "note": ""}], "tags": ["accessory"]}, {"alts": [], "cues": ["Full stretch", "Explode up", "Don't bounce"], "id": "emurqknwi1l2j6x", "kind": "weight", "name": "Standing Calf Raise", "note": "", "pause": "2 sec at the top", "perSide": false, "repMax": 12, "repMin": 8, "restSec": 60, "sets": [{"int": "Moderate", "note": ""}, {"int": "Moderate", "note": ""}, {"int": "Moderate", "note": ""}, {"int": "Hard", "note": ""}], "tags": ["calves"]}, {"alts": [], "cues": ["Slow stretch", "Hard squeeze"], "id": "emurqknwi1mbtp6", "kind": "weight", "name": "Seated Calf Raise", "note": "", "pause": "2 sec at the top", "perSide": false, "repMax": 20, "repMin": 12, "restSec": 60, "sets": [{"int": "Moderate", "note": ""}, {"int": "Moderate", "note": ""}, {"int": "Hard", "note": ""}], "tags": ["calves"]}, {"alts": [], "cues": ["Squeeze glute", "Stay tall", "Breathe slowly"], "id": "emurqknwi1nqn7n", "kind": "check", "name": "Couch Stretch", "note": "1 min per leg", "pause": "", "perSide": false, "repMax": 1, "repMin": 1, "restSec": 0, "sets": [{"int": "Easy", "note": ""}, {"int": "Easy", "note": ""}], "tags": ["posture"]}], "id": "legs", "mobility": [{"cue": "Segment the spine. Exhale as you round. Don't force range.", "dose": "5 reps", "name": "Cat-cow", "quick": true}, {"cue": "Exhale each rep. Low back stays down. Move slowly.", "dose": "1×5/side", "name": "Dead bug", "quick": true}, {"cue": "2 sec squeeze at the top. Ribs down, don't arch.", "dose": "10 reps", "name": "Glute bridge"}, {"cue": "Squeeze the glute, tuck the pelvis, stay tall. This is the big one for the pelvic tilt.", "dose": "30 s/side", "name": "Half-kneeling hip flexor stretch", "quick": true}, {"cue": "On all fours, one leg out to the side. Rock back until the inner thigh stretches. Slow breathing, don't force depth.", "dose": "8/side", "name": "Adductor rock-backs"}, {"cue": "Sit into the hip, push back up. Knee tracks over the foot.", "dose": "5/side", "name": "Lateral lunge"}], "name": "Legs", "subtitle": "Glutes · Legs · Calves", "type": "lift", "warmup": ["Leg swings – 15/leg", "Bodyweight squats – 10"], "weekday": 0}, {"color": 1, "exercises": [{"alts": [], "cues": ["Hips back", "Brace first", "Bar close to legs"], "id": "emurqknwi1bzaai", "kind": "weight", "name": "Romanian Deadlift", "note": "", "pause": "Reset before every rep", "perSide": false, "repMax": 6, "repMin": 5, "restSec": 150, "sets": [{"int": "Moderate", "note": ""}, {"int": "Moderate", "note": ""}, {"int": "Hard", "note": ""}], "tags": ["strength"]}, {"alts": [], "cues": ["Drive elbows to ribs", "Chest tall", "Control the return"], "id": "emurqknwi1cyr3e", "kind": "weight", "name": "Neutral-Grip Lat Pulldown", "note": "", "pause": "1 sec at chest", "perSide": false, "repMax": 8, "repMin": 6, "restSec": 120, "sets": [{"int": "Moderate", "note": ""}, {"int": "Moderate", "note": ""}, {"int": "Hard", "note": ""}, {"int": "Moderate", "note": ""}], "tags": ["strength"]}, {"alts": [], "cues": ["Pull with elbows", "Squeeze shoulder blades", "Don't shrug"], "id": "emurqknwi1d1jlb", "kind": "weight", "name": "Chest-Supported Row", "note": "", "pause": "1 sec squeeze", "perSide": false, "repMax": 10, "repMin": 8, "restSec": 90, "sets": [{"int": "Moderate", "note": ""}, {"int": "Moderate", "note": ""}, {"int": "Moderate", "note": ""}, {"int": "Hard", "note": ""}], "tags": ["posture"]}, {"alts": [], "cues": ["Slow lowering", "Full squeeze"], "id": "emurqknwi1en3k5", "kind": "weight", "name": "Seated Leg Curl", "note": "", "pause": "", "perSide": false, "repMax": 12, "repMin": 10, "restSec": 75, "sets": [{"int": "Moderate", "note": ""}, {"int": "Moderate", "note": ""}, {"int": "Hard", "note": ""}], "tags": ["accessory"]}, {"alts": [], "cues": ["Rope to forehead", "Elbows high", "Rotate hands back"], "id": "emurqknwi1fvqbb", "kind": "weight", "name": "Cable Face Pull", "note": "", "pause": "1 sec squeeze", "perSide": false, "repMax": 15, "repMin": 15, "restSec": 60, "sets": [{"int": "Easy", "note": ""}, {"int": "Moderate", "note": ""}, {"int": "Hard", "note": ""}], "tags": ["posture"]}, {"alts": [], "cues": ["Don't swing", "Slow eccentric"], "id": "emurqknwi1g7du2", "kind": "weight", "name": "Hammer Curl", "note": "", "pause": "", "perSide": false, "repMax": 12, "repMin": 10, "restSec": 60, "sets": [{"int": "Moderate", "note": ""}, {"int": "Hard", "note": ""}], "tags": ["physique"]}, {"alts": [], "cues": ["Full stretch at the bottom", "Explode up", "Don't bounce"], "id": "emurqknwi1hp6fy", "kind": "weight", "name": "Standing Calf Raise", "note": "Extra calf volume (3× per week total)", "pause": "2 sec at the top", "perSide": false, "repMax": 12, "repMin": 8, "restSec": 60, "sets": [{"int": "Moderate", "note": ""}, {"int": "Moderate", "note": ""}, {"int": "Hard", "note": ""}], "tags": ["calves"]}], "id": "pull", "mobility": [{"cue": "Segment the spine. Exhale as you round. Don't force range.", "dose": "5 reps", "name": "Cat-cow", "quick": true}, {"cue": "Exhale each rep. Low back stays down. Move slowly.", "dose": "1×5/side", "name": "Dead bug", "quick": true}, {"cue": "2 sec squeeze at the top. Ribs down, don't arch.", "dose": "10 reps", "name": "Glute bridge"}, {"cue": "Squeeze the glute, tuck the pelvis, stay tall. This is the big one for the pelvic tilt.", "dose": "30 s/side", "name": "Half-kneeling hip flexor stretch", "quick": true}, {"cue": "Rotate through the upper back, keep hips still.", "dose": "5/side", "name": "Thread the needle"}, {"cue": "Top hand pulls the towel up so the bottom hand climbs your back. Short pause at the top, chest tall.", "dose": "8 reps/side", "name": "Towel behind-back reach"}], "name": "Pull", "subtitle": "Back · Grip · Biceps", "type": "lift", "warmup": ["Band rows – 2×20", "Bodyweight good mornings – 2×12"], "weekday": 1}, {"color": 3, "cues": ["RPE 5–6: breathing up but controlled", "You can speak in short sentences", "Controlled, consistent pace", "Do NOT turn this into a hard workout"], "goal": "Build aerobic capacity and recover faster between BJJ exchanges.", "id": "cardioA", "machines": ["Bike"], "name": "Cardio A", "progression": "First build toward 45–50 min total. Once that feels comfortable, add resistance or pace while staying around RPE 5–6.", "segments": [{"block": "Warm-up", "intensity": "Easy", "label": "Very easy", "machine": "Bike", "rpe": "3", "sec": 120}, {"block": "Warm-up", "intensity": "Easy", "label": "Gradually increase pace", "machine": "Bike", "rpe": "4", "sec": 180}, {"block": "Main work", "intensity": "Moderate", "label": "Steady pace", "machine": "Bike", "rpe": "5–6", "sec": 2100}, {"block": "Cool-down", "intensity": "Easy", "label": "Very easy, bring breathing down", "machine": "Bike", "rpe": "2–3", "sec": 300}], "subtitle": "Aerobic base · Bike", "type": "cardio", "weekday": 2}, {"color": 0, "exercises": [{"alts": [], "cues": ["Feet planted", "Chest up", "Brace before every rep"], "id": "emurqknwi149xt0", "kind": "weight", "name": "Incline Barbell Bench Press", "note": "", "pause": "1 sec on first rep", "perSide": false, "repMax": 8, "repMin": 6, "restSec": 150, "sets": [{"int": "Moderate", "note": ""}, {"int": "Moderate", "note": ""}, {"int": "Hard", "note": ""}, {"int": "Moderate", "note": "Back-off"}], "tags": ["strength"]}, {"alts": [], "cues": ["Brace abs", "Elbows slightly forward", "Don't arch lower back"], "id": "emurqknwi15dbae", "kind": "weight", "name": "Seated Dumbbell Shoulder Press", "note": "", "pause": "", "perSide": false, "repMax": 8, "repMin": 6, "restSec": 90, "sets": [{"int": "Moderate", "note": ""}, {"int": "Moderate", "note": ""}, {"int": "Hard", "note": ""}], "tags": ["strength"]}, {"alts": [], "cues": ["Lead with elbows", "Don't shrug", "Control every rep"], "id": "emurqknwi165mst", "kind": "weight", "name": "Machine Lateral Raise", "note": "", "pause": "1 sec at the top", "perSide": false, "repMax": 15, "repMin": 12, "restSec": 60, "sets": [{"int": "Easy", "note": ""}, {"int": "Moderate", "note": ""}, {"int": "Moderate", "note": ""}, {"int": "Hard", "note": ""}], "tags": ["physique"]}, {"alts": [], "cues": ["Soft elbows", "Big chest squeeze"], "id": "emurqknwi17yq64", "kind": "weight", "name": "Cable Chest Fly", "note": "", "pause": "1 sec peak contraction", "perSide": false, "repMax": 15, "repMin": 12, "restSec": 60, "sets": [{"int": "Moderate", "note": ""}, {"int": "Hard", "note": ""}], "tags": ["physique"]}, {"alts": [], "cues": ["Elbows fixed", "Full lockout", "Slow return"], "id": "emurqknwi18t4e2", "kind": "weight", "name": "Cable Triceps Pressdown", "note": "", "pause": "", "perSide": false, "repMax": 12, "repMin": 10, "restSec": 60, "sets": [{"int": "Moderate", "note": ""}, {"int": "Moderate", "note": ""}, {"int": "Hard", "note": ""}], "tags": ["accessory"]}, {"alts": [], "cues": ["Pull shoulder blades together", "Don't shrug"], "id": "emurqknwi19jfhg", "kind": "reps", "name": "Band Pull-Aparts", "note": "", "pause": "1 sec squeeze", "perSide": false, "repMax": 20, "repMin": 20, "restSec": 45, "sets": [{"int": "Easy", "note": ""}, {"int": "Easy", "note": ""}], "tags": ["posture"]}, {"alts": [], "cues": ["Full stretch at the bottom", "Explode up", "Don't bounce"], "id": "emurqknwi1a23pn", "kind": "weight", "name": "Standing Calf Raise", "note": "Extra calf volume (3× per week total)", "pause": "2 sec at the top", "perSide": false, "repMax": 12, "repMin": 8, "restSec": 60, "sets": [{"int": "Moderate", "note": ""}, {"int": "Moderate", "note": ""}, {"int": "Hard", "note": ""}], "tags": ["calves"]}], "id": "push", "mobility": [{"cue": "Segment the spine. Exhale as you round. Don't force range.", "dose": "5 reps", "name": "Cat-cow", "quick": true}, {"cue": "Exhale each rep. Low back stays down. Move slowly.", "dose": "1×5/side", "name": "Dead bug", "quick": true}, {"cue": "2 sec squeeze at the top. Ribs down, don't arch.", "dose": "10 reps", "name": "Glute bridge"}, {"cue": "Squeeze the glute, tuck the pelvis, stay tall. This is the big one for the pelvic tilt.", "dose": "30 s/side", "name": "Half-kneeling hip flexor stretch", "quick": true}, {"cue": "Chin tucked, ribs down, low back on the wall. Smooth movement.", "dose": "8 reps", "name": "Wall angels"}, {"cue": "Rotate through the upper back, keep hips still.", "dose": "5/side", "name": "Thread the needle"}], "name": "Push", "subtitle": "Chest · Shoulders · Triceps", "type": "lift", "warmup": ["Foam roll upper back – 1 min", "Push-up pyramid – 5 / 8 / 10", "Band pull-aparts – 2×20"], "weekday": 3}, {"color": 4, "cues": ["Hard = fast and powerful, NOT an all-out sprint", "Rounds alternate Ski erg / Assault bike", "Use the 2 min easy to bring breathing down"], "goal": "Repeated hard efforts and recovery between exchanges.", "id": "cardioB", "machines": ["Ski erg", "Assault bike"], "name": "Cardio B", "progression": "Hard = a strong BJJ-style exchange, not a 100% sprint. When all 5 rounds feel controlled, push the hard bursts a little harder or add resistance.", "segments": [{"block": "Warm-up", "intensity": "Easy", "label": "Easy → moderate", "machine": "Ski erg", "rpe": "3–5", "sec": 180}, {"block": "Warm-up", "intensity": "Moderate", "label": "Moderate", "machine": "Ski erg", "rpe": "5", "sec": 30}, {"block": "Warm-up", "intensity": "Easy", "label": "Easy", "machine": "Ski erg", "rpe": "3", "sec": 30}, {"block": "Warm-up", "intensity": "Moderate", "label": "Moderate", "machine": "Ski erg", "rpe": "5", "sec": 30}, {"block": "Warm-up", "intensity": "Easy", "label": "Easy", "machine": "Ski erg", "rpe": "3", "sec": 30}, {"block": "Warm-up", "intensity": "Moderate", "label": "Moderate", "machine": "Ski erg", "rpe": "5", "sec": 30}, {"block": "Warm-up", "intensity": "Easy", "label": "Easy", "machine": "Ski erg", "rpe": "3", "sec": 30}, {"block": "Warm-up", "intensity": "Hard", "label": "Hard, fast and powerful", "machine": "Ski erg", "rpe": "7", "sec": 15}, {"block": "Warm-up", "intensity": "Easy", "label": "Easy", "machine": "Ski erg", "rpe": "3", "sec": 45}, {"block": "Warm-up", "intensity": "Hard", "label": "Hard, fast and powerful", "machine": "Ski erg", "rpe": "7", "sec": 15}, {"block": "Warm-up", "intensity": "Easy", "label": "Easy", "machine": "Ski erg", "rpe": "3", "sec": 45}, {"block": "Round 1", "intensity": "Moderate", "label": "Moderate", "machine": "Ski erg", "rpe": "6", "sec": 60}, {"block": "Round 1", "intensity": "Hard", "label": "Hard", "machine": "Ski erg", "rpe": "8", "sec": 30}, {"block": "Round 1", "intensity": "Moderate", "label": "Moderate", "machine": "Ski erg", "rpe": "6", "sec": 60}, {"block": "Round 1", "intensity": "Hard", "label": "Hard", "machine": "Ski erg", "rpe": "8", "sec": 30}, {"block": "Round 1", "intensity": "Moderate", "label": "Moderate", "machine": "Ski erg", "rpe": "6", "sec": 60}, {"block": "Round 1", "intensity": "Hard", "label": "Hard, strong exchange", "machine": "Ski erg", "rpe": "8–9", "sec": 60}, {"block": "Round 1", "intensity": "Easy", "label": "Easy recovery", "machine": "Ski erg", "rpe": "3", "sec": 120}, {"block": "Round 2", "intensity": "Moderate", "label": "Moderate", "machine": "Assault bike", "rpe": "6", "sec": 60}, {"block": "Round 2", "intensity": "Hard", "label": "Hard", "machine": "Assault bike", "rpe": "8", "sec": 30}, {"block": "Round 2", "intensity": "Moderate", "label": "Moderate", "machine": "Assault bike", "rpe": "6", "sec": 60}, {"block": "Round 2", "intensity": "Hard", "label": "Hard", "machine": "Assault bike", "rpe": "8", "sec": 30}, {"block": "Round 2", "intensity": "Moderate", "label": "Moderate", "machine": "Assault bike", "rpe": "6", "sec": 60}, {"block": "Round 2", "intensity": "Hard", "label": "Hard, strong exchange", "machine": "Assault bike", "rpe": "8–9", "sec": 60}, {"block": "Round 2", "intensity": "Easy", "label": "Easy recovery", "machine": "Assault bike", "rpe": "3", "sec": 120}, {"block": "Round 3", "intensity": "Moderate", "label": "Moderate", "machine": "Ski erg", "rpe": "6", "sec": 60}, {"block": "Round 3", "intensity": "Hard", "label": "Hard", "machine": "Ski erg", "rpe": "8", "sec": 30}, {"block": "Round 3", "intensity": "Moderate", "label": "Moderate", "machine": "Ski erg", "rpe": "6", "sec": 60}, {"block": "Round 3", "intensity": "Hard", "label": "Hard", "machine": "Ski erg", "rpe": "8", "sec": 30}, {"block": "Round 3", "intensity": "Moderate", "label": "Moderate", "machine": "Ski erg", "rpe": "6", "sec": 60}, {"block": "Round 3", "intensity": "Hard", "label": "Hard, strong exchange", "machine": "Ski erg", "rpe": "8–9", "sec": 60}, {"block": "Round 3", "intensity": "Easy", "label": "Easy recovery", "machine": "Ski erg", "rpe": "3", "sec": 120}, {"block": "Round 4", "intensity": "Moderate", "label": "Moderate", "machine": "Assault bike", "rpe": "6", "sec": 60}, {"block": "Round 4", "intensity": "Hard", "label": "Hard", "machine": "Assault bike", "rpe": "8", "sec": 30}, {"block": "Round 4", "intensity": "Moderate", "label": "Moderate", "machine": "Assault bike", "rpe": "6", "sec": 60}, {"block": "Round 4", "intensity": "Hard", "label": "Hard", "machine": "Assault bike", "rpe": "8", "sec": 30}, {"block": "Round 4", "intensity": "Moderate", "label": "Moderate", "machine": "Assault bike", "rpe": "6", "sec": 60}, {"block": "Round 4", "intensity": "Hard", "label": "Hard, strong exchange", "machine": "Assault bike", "rpe": "8–9", "sec": 60}, {"block": "Round 4", "intensity": "Easy", "label": "Easy recovery", "machine": "Assault bike", "rpe": "3", "sec": 120}, {"block": "Round 5", "intensity": "Moderate", "label": "Moderate", "machine": "Ski erg", "rpe": "6", "sec": 60}, {"block": "Round 5", "intensity": "Hard", "label": "Hard", "machine": "Ski erg", "rpe": "8", "sec": 30}, {"block": "Round 5", "intensity": "Moderate", "label": "Moderate", "machine": "Ski erg", "rpe": "6", "sec": 60}, {"block": "Round 5", "intensity": "Hard", "label": "Hard", "machine": "Ski erg", "rpe": "8", "sec": 30}, {"block": "Round 5", "intensity": "Moderate", "label": "Moderate", "machine": "Ski erg", "rpe": "6", "sec": 60}, {"block": "Round 5", "intensity": "Hard", "label": "Hard, strong exchange", "machine": "Ski erg", "rpe": "8–9", "sec": 60}, {"block": "Cool-down", "intensity": "Easy", "label": "Very easy, bring breathing down", "machine": "Assault bike", "rpe": "2–3", "sec": 300}], "subtitle": "BJJ conditioning · Ski erg + Assault bike", "type": "cardio", "weekday": 4}], "mobV": 2, "rules": ["Reach the top of the rep range on every set with good form before increasing the weight.", "Increase weight by the smallest increment possible.", "If technique breaks down, keep the same weight next session.", "Hard sets should finish with ~1 rep left in the tank (RIR 1). Never train to failure.", "If BJJ sparring was especially hard that day, turn every Hard set into a Moderate set."], "schedV": 1, "stretch": {"items": [{"cue": "Relax completely, let the low back sink.", "dose": "60 s", "name": "Knees-to-chest"}, {"cue": "Both shoulders stay on the floor. Breathe out into the twist.", "dose": "30 s/side", "name": "Supine twist"}, {"cue": "Squeeze the glute, tuck the pelvis, don't arch.", "dose": "45 s/side", "name": "Couch stretch", "quick": true}, {"cue": "Knees wide, ankles in line with knees. Relax the hips, rock back slowly, don't force depth.", "dose": "60–90 s", "name": "Frog stretch", "quick": true}, {"cue": "Lie on the side being stretched, elbow at shoulder height. Ease the forearm toward the floor. Mild stretch, no pinch.", "dose": "60 s/side", "name": "Sleeper stretch"}, {"cue": "Top hand pulls the towel up so the bottom hand climbs your back. Ribs down, chest tall.", "dose": "60 s/side", "name": "Towel behind-back stretch"}, {"cue": "Pull the chin straight back, relax the jaw.", "dose": "2×8", "name": "Chin tucks", "quick": true}], "name": "Night Reset", "perWeek": 2}, "title": "Posture → BJJ Strength → Physique"}, "sessions": [{"baseline": true, "date": "2026-10-03", "dayId": "legs", "dayName": "Legs", "exercises": [{"name": "Barbell Hip Thrust", "sets": [{"done": true, "int": "Moderate", "r": 8, "w": 45}, {"done": true, "int": "Moderate", "r": 8, "w": 45}, {"done": true, "int": "Hard", "r": 8, "w": 70}]}, {"name": "Bulgarian Split Squat", "sets": [{"done": true, "int": "Moderate", "r": 10, "w": 10}, {"done": true, "int": "Moderate", "r": 10, "w": 10}, {"done": true, "int": "Hard", "r": 10, "w": 15}]}, {"name": "Leg Press", "sets": [{"done": true, "int": "Moderate", "r": 12, "w": 45}, {"done": true, "int": "Moderate", "r": 12, "w": 45}, {"done": true, "int": "Hard", "r": 11, "w": 70}]}, {"name": "Standing Calf Raise", "sets": [{"done": true, "int": "Moderate", "r": 12, "w": 25}, {"done": true, "int": "Moderate", "r": 12, "w": 25}, {"done": true, "int": "Moderate", "r": 12, "w": 25}, {"done": true, "int": "Hard", "r": 11, "w": 30}]}, {"name": "Seated Calf Raise", "sets": [{"done": true, "int": "Moderate", "r": 12, "w": 25}, {"done": true, "int": "Moderate", "r": 12, "w": 25}]}], "id": "base-legs", "notes": "Baseline"}, {"baseline": true, "date": "2026-10-03", "dayId": "pull", "dayName": "Pull", "exercises": [{"name": "Romanian Deadlift", "sets": [{"done": true, "int": "Moderate", "r": 6, "w": 45}, {"done": true, "int": "Moderate", "r": 6, "w": 50}, {"done": true, "int": "Hard", "r": 6, "w": 55}]}, {"name": "Neutral-Grip Lat Pulldown", "sets": [{"done": true, "int": "Moderate", "r": 8, "w": 100}, {"done": true, "int": "Moderate", "r": 8, "w": 100}, {"done": true, "int": "Hard", "r": 8, "w": 115}, {"done": true, "int": "Moderate", "r": 8, "w": 100}]}, {"name": "Chest-Supported Row", "sets": [{"done": true, "int": "Moderate", "r": 10, "w": 35}, {"done": true, "int": "Moderate", "r": 10, "w": 35}, {"done": true, "int": "Moderate", "r": 10, "w": 35}, {"done": true, "int": "Hard", "r": 8, "w": 40}]}, {"name": "Seated Leg Curl", "sets": [{"done": true, "int": "Moderate", "r": 12, "w": 45}, {"done": true, "int": "Moderate", "r": 12, "w": 45}, {"done": true, "int": "Hard", "r": 10, "w": 45}]}, {"name": "Cable Face Pull", "sets": [{"done": true, "int": "Easy", "r": 15, "w": 15}, {"done": true, "int": "Moderate", "r": 15, "w": 15}, {"done": true, "int": "Hard", "r": 15, "w": 15}]}], "id": "base-pull", "notes": "Baseline"}, {"baseline": true, "date": "2026-10-03", "dayId": "push", "dayName": "Push", "exercises": [{"name": "Incline Barbell Bench Press", "sets": [{"done": true, "int": "Moderate", "r": 8, "w": 25}, {"done": true, "int": "Moderate", "r": 8, "w": 30}, {"done": true, "int": "Hard", "r": 6, "w": 35}, {"done": true, "int": "Moderate", "r": 6, "w": 30}]}, {"name": "Seated Dumbbell Shoulder Press", "sets": [{"done": true, "int": "Moderate", "r": 8, "w": 40}, {"done": true, "int": "Moderate", "r": 8, "w": 40}, {"done": true, "int": "Hard", "r": 8, "w": 35}]}, {"name": "Machine Lateral Raise", "sets": [{"done": true, "int": "Easy", "r": 15, "w": 7.5}, {"done": true, "int": "Moderate", "r": 15, "w": 10}, {"done": true, "int": "Moderate", "r": 12, "w": 10}, {"done": true, "int": "Hard", "r": 14, "w": 10}]}, {"name": "Cable Chest Fly", "sets": [{"done": true, "int": "Moderate", "r": 15, "w": 100}, {"done": true, "int": "Hard", "r": 13, "w": 115}]}, {"name": "Cable Triceps Pressdown", "sets": [{"done": true, "int": "Moderate", "r": 12, "w": 30}, {"done": true, "int": "Moderate", "r": 12, "w": 30}, {"done": true, "int": "Hard", "r": 12, "w": 30}]}], "id": "base-push", "notes": "Baseline"}, {"cardio": {"calories": null, "distance": null, "hr": null, "level": null, "machine": "Ski erg + Assault bike", "minutes": 46, "rounds": 5, "rpe": null}, "date": "2026-10-02", "dayId": "cardioB", "dayName": "Cardio B", "durationMin": 46, "exercises": [], "finishedAt": 1790994516054, "id": "smurrvnqa0jfns", "notes": "", "type": "cardio"}, {"bjjHard": false, "date": "2026-10-06", "dayId": "legs", "dayName": "Legs", "durationMin": 55, "exercises": [{"kind": "weight", "name": "Barbell Hip Thrust", "repMax": 8, "repMin": 6, "sets": [{"done": true, "int": "Moderate", "note": "", "r": 8, "w": 90}, {"done": true, "int": "Moderate", "note": "", "r": 8, "w": 90}, {"done": true, "int": "Hard", "note": "", "r": 8, "w": 100}, {"done": true, "int": "Moderate", "note": "Back-off", "r": 8, "w": 100}]}, {"kind": "weight", "name": "Bulgarian Split Squat", "repMax": 10, "repMin": 8, "sets": [{"done": true, "int": "Moderate", "note": "", "r": 10, "w": 20}, {"done": true, "int": "Moderate", "note": "", "r": 10, "w": 20}, {"done": true, "int": "Hard", "note": "", "r": 8, "w": 25}]}, {"kind": "weight", "name": "Leg Press", "repMax": 12, "repMin": 10, "sets": [{"done": true, "int": "Moderate", "note": "", "r": 12, "w": 90}, {"done": true, "int": "Moderate", "note": "", "r": 12, "w": 90}, {"done": true, "int": "Hard", "note": "", "r": 12, "w": 90}]}, {"kind": "weight", "name": "Standing Calf Raise", "repMax": 12, "repMin": 8, "sets": [{"done": true, "int": "Moderate", "note": "", "r": 12, "w": 100}, {"done": true, "int": "Moderate", "note": "", "r": 12, "w": 100}, {"done": true, "int": "Moderate", "note": "", "r": 11, "w": 100}, {"done": true, "int": "Hard", "note": "", "r": 10, "w": 100}]}, {"kind": "weight", "name": "Seated Calf Raise", "repMax": 20, "repMin": 12, "sets": [{"done": true, "int": "Moderate", "note": "", "r": 12, "w": 30}, {"done": true, "int": "Moderate", "note": "", "r": 12, "w": 30}, {"done": true, "int": "Hard", "note": "", "r": 10, "w": 30}]}, {"kind": "check", "name": "Couch Stretch", "repMax": 1, "repMin": 1, "sets": [{"done": true, "int": "Easy", "note": "", "r": null, "w": null}, {"done": true, "int": "Easy", "note": "", "r": null, "w": null}]}], "finishedAt": 1791302992682, "id": "smuwtl3thk04lg", "notes": "", "type": "lift"}, {"bjjHard": false, "date": "2026-10-07", "dayId": "pull", "dayName": "Pull", "durationMin": 69, "exercises": [{"kind": "weight", "name": "Romanian Deadlift", "repMax": 6, "repMin": 5, "sets": [{"done": true, "int": "Moderate", "note": "", "r": 6, "w": 135}, {"done": true, "int": "Moderate", "note": "", "r": 6, "w": 135}, {"done": true, "int": "Hard", "note": "", "r": 6, "w": 135}]}, {"kind": "weight", "name": "Neutral-Grip Lat Pulldown", "repMax": 8, "repMin": 6, "sets": [{"done": true, "int": "Moderate", "note": "", "r": 8, "w": 105}, {"done": true, "int": "Moderate", "note": "", "r": 8, "w": 105}, {"done": true, "int": "Hard", "note": "", "r": 8, "w": 105}, {"done": true, "int": "Moderate", "note": "", "r": 8, "w": 105}]}, {"kind": "weight", "name": "Chest-Supported Row", "repMax": 10, "repMin": 8, "sets": [{"done": true, "int": "Moderate", "note": "", "r": 10, "w": 35}, {"done": true, "int": "Moderate", "note": "", "r": 10, "w": 35}, {"done": true, "int": "Moderate", "note": "", "r": 10, "w": 35}, {"done": true, "int": "Hard", "note": "", "r": 11, "w": 35}]}, {"kind": "weight", "name": "Seated Leg Curl", "repMax": 12, "repMin": 10, "sets": [{"done": true, "int": "Moderate", "note": "", "r": 12, "w": 45}, {"done": true, "int": "Moderate", "note": "", "r": 12, "w": 45}, {"done": true, "int": "Hard", "note": "", "r": 12, "w": 45}]}, {"kind": "weight", "name": "Cable Face Pull", "repMax": 15, "repMin": 15, "sets": [{"done": true, "int": "Easy", "note": "", "r": 15, "w": 45}, {"done": true, "int": "Moderate", "note": "", "r": 15, "w": 45}, {"done": true, "int": "Hard", "note": "", "r": 15, "w": 45}]}, {"kind": "weight", "name": "Hammer Curl", "repMax": 12, "repMin": 10, "sets": [{"done": true, "int": "Moderate", "note": "", "r": 12, "w": 50}, {"done": true, "int": "Hard", "note": "", "r": 9, "w": 50}]}, {"kind": "weight", "name": "Standing Calf Raise", "repMax": 12, "repMin": 8, "sets": [{"done": true, "int": "Moderate", "note": "", "r": 12, "w": 100}, {"done": true, "int": "Moderate", "note": "", "r": 12, "w": 100}, {"done": true, "int": "Hard", "note": "", "r": 12, "w": 100}]}], "finishedAt": 1791376887480, "id": "smuy12geakjxny", "notes": "", "type": "lift"}], "bodyweight": [{"date": "2026-10-03", "lb": 150}, {"date": "2026-10-02", "lb": 150}, {"date": "2026-10-04", "lb": 150}, {"date": "2026-10-05", "lb": 148}, {"date": "2026-10-06", "lb": 151.4}, {"date": "2026-10-07", "lb": 153.4}], "settings": {"autoTimer": true, "cardioPerWeek": 2, "goalWeight": 170, "increment": 5, "kcal": 3300, "liftsPerWeek": 3, "protein": 150, "startWeight": 150, "theme": "dark", "totalSince": "2026-10-06", "unit": "lb"}, "stretchLog": []};
@@ -517,7 +553,7 @@ const idb = {
 };
 let lsFull = false, idbReady = false; // the mirror is only written after startup has checked it, so a blank start can't overwrite it
 function saveLocal() {
-  S.savedAt = Date.now();
+  S.savedAt = Date.now(); memo = {};
   const j = JSON.stringify(S);
   try { localStorage.setItem(LS_KEY, j); lsFull = false; } catch (e) { if (!lsFull) toast("Quick storage is full. Your logs are still saved; export a backup to be safe."); lsFull = true; }
   try { if (idbReady) idb.set(LS_KEY, j).catch(() => {}); } catch (e) {}
@@ -536,21 +572,28 @@ const cloud = {
   session(s) { this.write("sessions/" + s.id, () => this.db.collection("sessions").doc(s.id).set(clone(s))); },
   removeSession(id) { this.write("sessions/" + id, () => this.db.collection("sessions").doc(id).delete()); },
   all() { this.program(); this.body(); S.sessions.forEach(s => this.session(s)); },
+  /* The store hands back at most 1000 sessions per read (about 4 years), so read on in date order until all are in. */
+  async allSessions(db) {
+    const out = new Map(); let from = "";
+    for (;;) {
+      const q = await db.collection("sessions").where("date", ">=", from).orderBy("date").limit(1000).get();
+      let added = 0; for (const d of q.docs) if (!out.has(d.id)) { out.set(d.id, clone(d.data())); added++; }
+      if (q.docs.length < 1000 || !added) return [...out.values()];
+      from = q.docs[q.docs.length - 1].data().date;
+    }
+  },
   async init() {
     try {
       if (!window.claude || typeof window.claude.use !== "function") return;
       const db = await window.claude.use("db");
       if (!db) return;
-      const [p, b, ss] = await Promise.all([
-        db.doc("app/program").get(), db.doc("app/body").get(),
-        db.collection("sessions").orderBy("date").limit(1000).get(),
-      ]);
+      const [p, b, ss] = await Promise.all([db.doc("app/program").get(), db.doc("app/body").get(), this.allSessions(db)]);
       this.db = db;
-      if (!p.exists && !b.exists && ss.empty) { this.all(); }
+      if (!p.exists && !b.exists && !ss.length) { this.all(); }
       else {
         if (p.exists) S.program = clone(p.data().program);
         if (b.exists) { const d = clone(b.data()); S.bodyweight = d.entries || []; S.settings = Object.assign(S.settings, d.settings || {}); S.stretchLog = d.stretch || S.stretchLog || []; }
-        S.sessions = ss.docs.map(d => clone(d.data()));
+        S.sessions = ss;
         if (migrate()) this.program();
         saveLocal();
       }
@@ -581,13 +624,14 @@ const daysBetween = (a, b) => Math.round((parseD(b) - parseD(a)) / 86400000);
 const fmtRest = s => !s ? "" : s >= 60 ? (s % 60 ? `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}` : `${s / 60} min`) : `${s}s`;
 const mmss = s => { s = Math.max(0, Math.round(s)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; };
 const parseMMSS = v => { v = String(v).trim(); if (v.includes(":")) { const [m, s] = v.split(":"); return (parseInt(m, 10) || 0) * 60 + (parseInt(s, 10) || 0); } return Math.round((parseFloat(v) || 0) * 60); };
-const repRange = e => e.repMin === e.repMax ? `${e.repMin}` : `${e.repMin}–${e.repMax}`;
+const repRange = e => (e.repMin === e.repMax ? `${e.repMin}` : `${e.repMin}–${e.repMax}`) + (e.unit ? ` ${e.unit}` : "");
 const e1rm = (w, r) => (w > 0 && r > 0) ? w * (1 + r / 30) : 0;
 const key = name => String(name || "").trim().toLowerCase();
 const U = () => S.settings.unit || "lb";
 const weekday = s => (parseD(s).getDay() + 6) % 7; // 0 = Monday
 const weekStart = s => addDays(s, -weekday(s));
-function sortedSessions() { return [...S.sessions].sort((a, b) => (a.date === b.date ? (a.finishedAt || 0) - (b.finishedAt || 0) : a.date < b.date ? -1 : 1)); }
+const memoize = (k, f) => k in memo ? memo[k] : (memo[k] = f());
+const sortedSessions = () => memoize("sorted", () => [...S.sessions].sort((a, b) => (a.date === b.date ? (a.finishedAt || 0) - (b.finishedAt || 0) : a.date < b.date ? -1 : 1)));
 const dayById = id => S.program.days.find(d => d.id === id);
 const liftDays = () => S.program.days.filter(d => d.type !== "cardio");
 const cardioDays = () => S.program.days.filter(d => d.type === "cardio");
@@ -601,9 +645,10 @@ const badgeText = d => esc(d.type === "cardio" ? d.name.slice(0, 1) + d.name.sli
 /* Before totalSince, weights were logged per dumbbell / without the bar. Those sessions stay in the calendar but don't feed records, coaching or charts. */
 const oldLoad = s => !isCardio(s) && !!S.settings.totalSince && s.date < S.settings.totalSince;
 function historyFor(name) {
-  const k = key(name), out = [];
-  for (const s of sortedSessions()) if (!oldLoad(s)) for (const e of (s.exercises || [])) if (key(e.name) === k && e.sets.some(x => x.done)) out.push({ session: s, ex: e });
-  return out;
+  const all = memoize("hist", () => { const m = new Map();
+    for (const s of sortedSessions()) if (!oldLoad(s)) for (const e of (s.exercises || [])) if (e.sets.some(x => x.done)) { const k = key(e.name); (m.get(k) || m.set(k, []).get(k)).push({ session: s, ex: e }); }
+    return m; });
+  return all.get(key(name)) || [];
 }
 function lastFor(name, excludeId) { const h = historyFor(name).filter(x => x.session.id !== excludeId); return h.length ? h[h.length - 1] : null; }
 function setsSummary(e) { return e.sets.filter(x => x.done).map(x => (x.w != null && x.w !== "" && Number(x.w) !== 0 ? `${fmtNum(x.w)}×${x.r ?? "–"}` : `${x.r ?? "✓"}`)).join(" · "); }
@@ -667,9 +712,13 @@ function render() {
   else if (v === "body") html = viewBody();
   else if (v === "program") html = viewProgram();
   const tabs = [["today", "Train"], ["calendar", "Calendar"], ["progress", "Progress"], ["body", "Body"], ["program", "Program"]];
-  app.innerHTML = `<div class="wrap">${html}</div>
-    <nav class="tabs"><div class="in">${tabs.map(([k, l]) => `<button data-act="tab" data-v="${k}" class="${v === k ? "on" : ""}">${I[k]}<span>${l}</span></button>`).join("")}</div></nav>
-    ${timerHTML()}`;
+  app.innerHTML = `<div class="wrap">${html}</div>`;
+  // The tab bar and rest pill live outside the page content and are only updated, never rebuilt, so they stay put while you scroll.
+  let nav = document.getElementById("tabs");
+  if (!nav) { document.body.insertAdjacentHTML("beforeend", `<nav class="tabs" id="tabs"><div class="in">${tabs.map(([k, l]) => `<button data-act="tab" data-v="${k}">${I[k]}<span>${l}</span></button>`).join("")}</div></nav>`); nav = document.getElementById("tabs"); }
+  nav.querySelectorAll("button").forEach(b => b.classList.toggle("on", b.dataset.v === v));
+  const tEl = document.getElementById("timer"), tH = timerHTML();
+  if (tEl) tH ? patch(tEl, tH) : tEl.remove(); else if (tH) document.body.insertAdjacentHTML("beforeend", tH);
   // Year heatmaps open scrolled to today.
   app.querySelectorAll(".heat-wrap").forEach(el => {
     const y = Number(el.dataset.year), t = todayISO();
@@ -682,7 +731,7 @@ const statusPill = () => cloud.status === "synced" ? `<span class="pill-status s
 /* ----- Consistency & records ----- */
 // A goal week = the weekly lift goal met. Rest days never break anything; only a missed week does,
 // and the current week only counts once it's met.
-function weekCounts() { const m = {}; for (const s of S.sessions) { if (s.baseline) continue; const k = m[weekStart(s.date)] = m[weekStart(s.date)] || { l: 0, c: 0 }; isCardio(s) ? k.c++ : k.l++; } return m; }
+const weekCounts = () => memoize("weeks", () => { const m = {}; for (const s of S.sessions) { if (s.baseline) continue; const w = weekStart(s.date), k = m[w] || (m[w] = { l: 0, c: 0 }); isCardio(s) ? k.c++ : k.l++; } return m; });
 function streakInfo() {
   const m = weekCounts(), goal = S.settings.liftsPerWeek, cg = S.settings.cardioPerWeek, cur = weekStart(todayISO());
   const met = w => !!m[w] && m[w].l >= goal;
@@ -693,7 +742,7 @@ function streakInfo() {
   const weeks = Object.keys(m);
   return { streak, best, goalWeeks: weeks.filter(met).length, perfect: weeks.filter(wk => met(wk) && m[wk].c >= cg).length, week: m[cur] || { l: 0, c: 0 }, curMet: met(cur) };
 }
-function allPRs() {
+const allPRs = () => memoize("prs", () => {
   const best = {}, out = [];
   for (const s of sortedSessions()) if (!oldLoad(s)) for (const e of (s.exercises || [])) {
     const t = topSet(e); if (!t) continue;
@@ -702,7 +751,7 @@ function allPRs() {
     best[k] = Math.max(best[k] ?? 0, w);
   }
   return out;
-}
+});
 function milestones() {
   const real = S.sessions.filter(s => !s.baseline), st = streakInfo(), prs = allPRs().length;
   const cMin = real.filter(isCardio).reduce((a, s) => a + (s.durationMin || 0), 0);
@@ -847,8 +896,8 @@ function viewToday() {
     h += `</div>`;
   }
   if (adv.down.length) {
-    h += `<div class="eyebrow">Go lighter</div><div class="card"><div class="muted small" style="margin-bottom:6px">Missed the bottom of the range, or it's been a while. Drop a little and rebuild.</div>`;
-    h += adv.down.map(r => `<div class="row between" style="padding:9px 0;border-top:1px solid var(--line)"><span class="grow">${esc(r.name)}<span class="faint tiny" style="display:block">${r.kind === "break" ? `${r.gap} days off` : `${pl(r.missed, "set")} under range`}</span></span><span class="small num" style="color:var(--warn);font-weight:700">${fmtNum(r.from)} → ${fmtNum(r.to)} ${U()}</span></div>`).join("");
+    h += `<div class="eyebrow">Go lighter</div><div class="card"><div class="muted small" style="margin-bottom:6px">Missed reps, time off, or a form reset. Drop a little and rebuild.</div>`;
+    h += adv.down.map(r => `<div class="row between" style="padding:9px 0;border-top:1px solid var(--line)"><span class="grow">${esc(r.name)}<span class="faint tiny" style="display:block">${r.kind === "reset" ? "Form reset" : r.kind === "break" ? `${r.gap} days off` : `${pl(r.missed, "set")} under range`}</span></span><span class="small num" style="color:var(--warn);font-weight:700">${fmtNum(r.from)} → ${fmtNum(r.to)} ${U()}</span></div>`).join("");
     h += `</div>`;
   }
   return h;
@@ -861,10 +910,22 @@ function viewToday() {
 /* Weights you can actually load: everything moves in whole jumps (5 lb total; a pair of dumbbells going up 2.5 each is +5). */
 const snap = (w, inc) => Math.max(0, Math.round(w / inc) * inc);
 /* After a break: a lighter weight, rounded down to a loadable jump. */
-const lighter = (w, f, inc) => w <= inc ? w : Math.max(inc, Math.floor(w * f / inc) * inc);
+const lighter = (w, f, inc) => w <= inc ? w : Math.max(inc, Math.min(w - inc, snap(w * f, inc)));
+/* How many sets to drop on. Only when 2+ sets, or the heaviest set, fell under the range: one set a rep short is
+   normal fatigue, so the weight stays. Returns [sets to drop, sets short]. */
+const dropFloor = t => t.repMin === t.repMax ? t.repMax - 2 : t.repMin;
+function dropCount(sets, t) {
+  const d = sets.filter(x => x.done && Number(x.w) > 0).map(x => ({ w: Number(x.w), r: Number(x.r !== "" && x.r != null ? x.r : x.ph) }));
+  if (!d.length) return [0, 0];
+  const floor = dropFloor(t), short = d.filter(x => x.r < t.repMin).length, low = d.filter(x => x.r < floor).length;
+  const tw = Math.max(...d.map(x => x.w)), topR = Math.max(...d.filter(x => x.w === tw).map(x => x.r));
+  return [low && (low >= 2 || topR < floor) ? low : 0, short];
+}
 function advice(t, name, excludeId) {
   if (!t || (t.kind || "weight") !== "weight") return null;
   const h = historyFor(name).filter(x => x.session.id !== excludeId);
+  if (Number(t.nextW) > 0) { const lt = h.length ? topSet(h[h.length - 1].ex) : null;
+    return { kind: "reset", from: lt ? Number(lt.w) : null, to: Number(t.nextW), msg: `Reset to ${fmtNum(t.nextW)} ${U()} on every set today (filled in). Nail the form, then build back up.` }; }
   if (!h.length) return null;
   const last = h[h.length - 1], inc = incFor(t), top = topSet(last.ex);
   if (!top) return null;
@@ -874,13 +935,12 @@ function advice(t, name, excludeId) {
     return { kind: "break", gap, factor: f, from: tw, to: lighter(tw, f, inc),
       msg: `${gap >= 35 ? Math.round(gap / 7) + " weeks" : "3+ weeks"} since you last did this. Start about ${Math.round((1 - f) * 100)}% lighter today (filled in) and build back up.` };
   }
-  const done = last.ex.sets.filter(x => x.done && Number(x.w) > 0);
-  const missed = done.filter(x => Number(x.r) < t.repMin);
-  if (missed.length && (missed.length >= 2 || missed.includes(top))) {
-    return { kind: "down", from: tw, to: snap(tw - inc, inc), missed: missed.length,
-      msg: `${pl(missed.length, "set")} fell below ${t.repMin} reps last time. Drop ${fmtNum(inc)} ${U()} on ${missed.length === 1 ? "that set" : "those sets"} today (filled in).` };
+  const [missed] = dropCount(last.ex.sets, t);
+  if (missed) {
+    return { kind: "down", from: tw, to: snap(tw - inc, inc), missed,
+      msg: `${pl(missed, "set")} fell below ${dropFloor(t)} reps last time. Drop ${fmtNum(inc)} ${U()} on ${missed === 1 ? "that set" : "those sets"} today (filled in).` };
   }
-  if (readyToProgress(t, last.ex)) return { kind: "up", from: tw, to: snap(tw + inc, inc), msg: `Go heavier today: ${fmtNum(snap(tw + inc, inc))} ${U()} on your top set (filled in).` };
+  if (readyToProgress(t, last.ex)) return { kind: "up", from: tw, to: snap(tw + inc, inc), msg: `Every set hit ${t.repMax} last time. Add ${fmtNum(inc)} ${U()} to each set today (filled in).` };
   if (h.length >= 2) {
     const prevTop = topSet(h[h.length - 2].ex);
     if (prevTop && Number(prevTop.w) > tw) return { kind: "lowered", from: Number(prevTop.w), to: tw,
@@ -916,18 +976,20 @@ function startSession(dayId) {
 }
 function buildDraftEx(e, name) {
   const last = lastFor(name), adv = advice(e, name), inc = incFor(e);
-  const top = last ? topSet(last.ex) : null;
   const done = last ? last.ex.sets.filter(x => x.done) : [];
+  let prev = "";
   return {
     tid: e.id, name, sets: e.sets.map((st, i) => {
       const ls = done[i];
-      let w = ls && ls.w != null ? ls.w : "";
+      let w = ls && ls.w != null && ls.w !== "" ? ls.w : prev;
       // Pre-fill today's weights from last time, adjusted by the coaching advice.
-      if (adv && ls && Number(ls.w) > 0) {
-        if (adv.kind === "up" && top && Number(ls.w) === Number(top.w)) w = snap(Number(top.w) + inc, inc);
-        else if (adv.kind === "down" && Number(ls.r) < e.repMin) w = snap(Number(ls.w) - inc, inc);
+      if (adv && adv.kind === "reset") w = adv.to;
+      else if (adv && ls && Number(ls.w) > 0) {
+        if (adv.kind === "up") w = snap(Number(ls.w) + inc, inc);
+        else if (adv.kind === "down" && Number(ls.r) < dropFloor(e)) w = snap(Number(ls.w) - inc, inc);
         else if (adv.kind === "break") w = lighter(Number(ls.w), adv.factor, inc);
       }
+      prev = w;
       return { w, r: "", ph: ls ? ls.r : "", int: st.int, note: st.note || "", done: false };
     }),
   };
@@ -978,11 +1040,11 @@ function exerciseCard(dex, ei) {
   const doneNow = dex.sets.filter(s => s.done);
   const need = t.repMax;
   const allTopNow = kind !== "check" && doneNow.length >= dex.sets.length && doneNow.every(s => Number(s.r || s.ph) >= need);
-  const belowNow = kind === "weight" ? doneNow.filter(s => Number(s.r || s.ph) < t.repMin).length : 0;
+  const [belowNow, shortNow] = kind === "weight" ? dropCount(doneNow, t) : [0, 0];
   const allDone = doneNow.length === dex.sets.length && dex.sets.length;
   if ((allDone && !ui.expanded[ei]) || (ui.collapsed || {})[ei]) {
     const shown = allDone ? dex.sets : doneNow;
-    const sum = shown.length ? shown.map(s => kind === "weight" ? `${fmtNum(s.w)}×${s.r || s.ph}` : kind === "reps" ? `${s.r || s.ph}` : "✓").join(" · ") : "Not started";
+    const sum = shown.length ? shown.map(s => kind === "weight" ? `${fmtNum(s.w)}×${s.r || s.ph}` : kind === "reps" ? `${s.r || s.ph}${t.unit || ""}` : "✓").join(" · ") : "Not started";
     return `<div class="card" style="padding:12px 16px"><button class="ex-done" data-act="expand" data-ei="${ei}">${allDone ? `<span class="tick">${I.checkSm}</span>` : `<span class="tick part num">${doneNow.length}/${dex.sets.length}</span>`}<span class="grow"><b>${esc(dex.name)}</b><span class="muted small num" style="display:block">${esc(sum)}</span></span>${belowNow ? `<span class="chip" style="color:var(--warn)">↓ next time</span>` : allTopNow && kind === "weight" ? `<span class="chip" style="color:var(--good)">↑ next time</span>` : ""}<span class="faint">${I.chevDown}</span></button></div>`;
   }
   let h = `<div class="card"><div class="ex-head"><div class="grow">
@@ -990,7 +1052,7 @@ function exerciseCard(dex, ei) {
     <div class="meta num">${kind === "check" ? `${dex.sets.length} rounds${t.note ? " · " + esc(t.note) : ""}` : `${dex.sets.length} × ${repRange(t)}${t.perSide ? " /leg" : ""}`}${t.restSec ? ` · rest ${fmtRest(t.restSec)}` : ""}</div></div>
     <div class="row" style="gap:6px;flex:none"><button class="cue-btn" data-act="collapse" data-ei="${ei}" aria-label="Close this lift" style="padding:0 9px">${I.chevUp}</button><button class="cue-btn ${open ? "on" : ""}" data-act="cues" data-ei="${ei}">Cues ${open ? I.chevUp : I.chevDown}</button></div></div>`;
   if (open) {
-    h += `<div class="cues">${t.cues && t.cues.length ? `<div class="k">Keep in mind</div><ul>${t.cues.map(c => `<li>${esc(c)}</li>`).join("")}</ul>` : ""}
+    h += `<div class="cues">${t.cues && t.cues.length ? `<div class="k">Keep in mind</div><ul>${t.cues.map(c => `<li>${esc(c)}</li>`).join("")}</ul>` : ""}${t.feel ? `<div class="k" style="margin-top:10px">Feel it in</div><div>${esc(t.feel)}</div>` : ""}
       ${t.pause ? `<div class="k" style="margin-top:10px">Pause</div><div>${esc(t.pause)}</div>` : ""}
       ${t.note && kind !== "check" ? `<div class="k" style="margin-top:10px">Note</div><div>${esc(t.note)}</div>` : ""}
       ${tagDots(t.tags) ? `<div class="row wrapf" style="margin-top:10px;gap:6px">${tagDots(t.tags)}</div>` : ""}</div>`;
@@ -998,14 +1060,15 @@ function exerciseCard(dex, ei) {
   if (kind === "weight") h += `<div class="rule">${I.up}<span>Go up when every set hits <b>${need}</b> reps, then add <b>${fmtNum(inc)} ${U()}</b>.</span></div>`;
   if (last && kind !== "check") h += `<div class="rule faint num" style="margin-top:4px">Last ${fmtDate(last.session.date)}: ${esc(setsSummary(last.ex))}</div>`;
   if (adv) h += `<div class="hint ${adv.kind === "up" ? "" : "down"}">${adv.kind === "up" ? I.up : I.down}<span>${esc(adv.msg)}</span></div>`;
-  if (belowNow) h += `<div class="hint down">${I.down}<span>${pl(belowNow, "set")} under ${t.repMin} reps today. Drop ${fmtNum(inc)} ${U()} on ${belowNow === 1 ? "it" : "them"} next time.</span></div>`;
+  if (belowNow) h += `<div class="hint down">${I.down}<span>${pl(belowNow, "set")} under ${dropFloor(t)} reps today. Drop ${fmtNum(inc)} ${U()} on ${belowNow === 1 ? "it" : "them"} next time.</span></div>`;
+  else if (shortNow && allDone) h += `<div class="rule">${I.up}<span>${pl(shortNow, "set")} a little short. Keep the weight and get every set to ${need} next time.</span></div>`;
   else if (allTopNow && kind === "weight") h += `<div class="hint">${I.check}<span>Every set at ${need}. Add ${fmtNum(inc)} ${U()} next time.</span></div>`;
-  h += `<div class="sets"><div class="set ${cls}"><span></span>${kind === "weight" ? `<span class="hdr">${U()}</span><span></span>` : ""}${kind !== "check" ? `<span class="hdr">Reps</span><span class="hdr">Effort</span>` : `<span></span>`}<span></span></div>`;
+  h += `<div class="sets"><div class="set ${cls}"><span></span>${kind === "weight" ? `<span class="hdr">${U()}</span><span></span>` : ""}${kind !== "check" ? `<span class="hdr">${t.unit === "s" ? "Seconds" : "Reps"}</span><span class="hdr">Effort</span>` : `<span></span>`}<span></span></div>`;
   dex.sets.forEach((s, si) => {
     const int = shownInt(s.int);
     h += `<div class="set ${cls} ${s.done ? "is-done" : ""}"><span class="n">${si + 1}</span>`;
     if (kind === "weight") h += `<input inputmode="decimal" aria-label="Weight set ${si + 1}" data-ei="${ei}" data-si="${si}" data-k="w" value="${esc(s.w)}" placeholder="–"><span class="x">×</span>`;
-    if (kind !== "check") h += `<input inputmode="numeric" aria-label="Reps set ${si + 1}" data-ei="${ei}" data-si="${si}" data-k="r" value="${esc(s.r)}" placeholder="${esc(s.ph || "")}">
+    if (kind !== "check") h += `<input inputmode="numeric" aria-label="${t.unit === "s" ? "Seconds" : "Reps"} set ${si + 1}" data-ei="${ei}" data-si="${si}" data-k="r" value="${esc(s.r)}" placeholder="${esc(s.ph || "")}">
       <button class="int ${int}" data-act="int" data-ei="${ei}" data-si="${si}">${int}${s.note ? "*" : ""}</button>`;
     else h += `<span class="muted small">${esc(t.note || "Round " + (si + 1))}</span>`;
     h += `<button class="done-btn ${s.done ? "on" : ""}" data-act="done" data-ei="${ei}" data-si="${si}" aria-label="Set done">${I.check}</button></div>`;
@@ -1024,7 +1087,7 @@ function finishSession() {
   if (!exs.length) { toast("Log at least one set first"); return; }
   const prs = [];
   for (const e of exs) {
-    const prev = historyFor(e.name).filter(x => x.session.id !== draft.id);
+    const prev = historyFor(e.name).filter(x => x.session.id !== draft.id && x.session.date <= draft.date);
     if (!prev.length) continue;
     const pw = Math.max(0, ...prev.flatMap(p => p.ex.sets.filter(s => s.done).map(s => Number(s.w) || 0)));
     const pe = Math.max(0, ...prev.flatMap(p => p.ex.sets.filter(s => s.done).map(s => e1rm(Number(s.w), Number(s.r)))));
@@ -1034,10 +1097,14 @@ function finishSession() {
     else if (be > pe + 0.01 && pe > 0) prs.push(`${e.name}: best set yet`);
   }
   const sess = { id: draft.id, type: "lift", date: draft.date, dayId: draft.dayId, dayName: draft.dayName, bjjHard: draft.bjjHard, notes: draft.notes,
-    durationMin: draft.editing ? (draft.durationMin || null) : Math.max(1, Math.round((Date.now() - draft.startedAt) / 60000)),
+    durationMin: draft.editing ? (draft.durationMin || null) : Math.max(1, Math.round(((draft.lastAt || Date.now()) - draft.startedAt) / 60000)),
     finishedAt: draft.finishedAt || Date.now(), exercises: exs };
   if (draft.baseline) sess.baseline = true;
+  const editing = draft.editing;
   saveSession(sess);
+  let reset = false; // a coach reset weight is used once, by a new workout
+  if (!editing) for (const e of exs) { const t = findTmpl(sess.dayId, e.name); if (t && t.nextW) { delete t.nextW; reset = true; } }
+  if (reset) persist("program");
   const after = exs.map(e => ({ name: e.name, a: advice(findTmpl(sess.dayId, e.name), e.name) })).filter(x => x.a);
   const ready = after.filter(x => x.a.kind === "up"), lower = after.filter(x => x.a.kind === "down");
   summaryModal(sess, `${prs.length ? `<div class="eyebrow" style="margin-left:0">Personal records</div>${prs.map(p => `<div class="pr" style="padding:3px 0">★ ${esc(p)}</div>`).join("")}` : ""}
@@ -1129,12 +1196,12 @@ function finishCardio() {
 }
 
 /* ----- Calendar ----- */
-let _restStart = null;
+let _restStart = null, _restToday = "";
 function isRestDay(d, by) {
-  if (_restStart === null) _restStart = S.sessions.length ? S.sessions.map(x => x.date).sort()[0] : "9999";
-  return d >= _restStart && d < todayISO() && !(by[d] && by[d].length);
+  if (_restStart === null) { _restStart = S.sessions.length ? S.sessions.map(x => x.date).sort()[0] : "9999"; _restToday = todayISO(); }
+  return d >= _restStart && d < _restToday && !(by[d] && by[d].length);
 }
-function sessionsByDate() { const m = {}; for (const s of S.sessions) (m[s.date] = m[s.date] || []).push(s); return m; }
+const sessionsByDate = () => memoize("byDate", () => { const m = {}; for (const s of S.sessions) (m[s.date] = m[s.date] || []).push(s); return m; });
 function viewCalendar() {
   let h = `<header class="top"><div><h1>Calendar</h1><div class="sub">${pl(S.sessions.filter(s => !s.baseline).length, "workout")} logged</div></div>
     <div class="seg">${[["month", "Month"], ["year", "Year"], ["all", "All years"]].map(([k, l]) => `<button class="${ui.calMode === k ? "on" : ""}" data-act="calMode" data-v="${k}">${l}</button>`).join("")}</div></header>`;
@@ -1443,15 +1510,14 @@ function bodyLog(l) {
   return h + `</div>`;
 }
 /* 7-day average for every entry in one pass (list sorted by date). */
-function avg7Map(l) { const m = new Map(); let j = 0, sum = 0; for (let i = 0; i < l.length; i++) { sum += l[i].lb; while (daysBetween(l[j].date, l[i].date) >= 7) sum -= l[j++].lb; m.set(l[i].date, sum / (i - j + 1)); } return m; }
-function rollingAvg(list, d) { const w = list.filter(e => { const k = daysBetween(e.date, d); return k >= 0 && k < 7; }); return w.length ? w.reduce((a, e) => a + e.lb, 0) / w.length : null; }
-function latestBW() { const l = bwSorted(); if (!l.length) return null; const last = l[l.length - 1]; return { date: last.date, lb: last.lb, avg: rollingAvg(l, last.date) }; }
+const dayNum = s => Date.UTC(+s.slice(0, 4), +s.slice(5, 7) - 1, +s.slice(8, 10)) / 86400000;
+function avg7Map(l) { const m = new Map(), n = l.map(e => dayNum(e.date)); let j = 0, sum = 0; for (let i = 0; i < l.length; i++) { sum += l[i].lb; while (n[i] - n[j] >= 7) sum -= l[j++].lb; m.set(l[i].date, sum / (i - j + 1)); } return m; }
 function viewBody() {
-  const l = bwSorted(), st = S.settings, lb = latestBW();
+  const l = bwSorted(), st = S.settings, A = avg7Map(l), last = l[l.length - 1], lb = last ? { lb: last.lb, avg: A.get(last.date) } : null;
   let rate = null;
   if (l.length >= 2) {
-    const lastD = l[l.length - 1].date, ref = l.filter(e => daysBetween(e.date, lastD) >= 21), base = ref.length ? ref[ref.length - 1] : l[0], days = daysBetween(base.date, lastD);
-    if (days >= 7) rate = (rollingAvg(l, lastD) - rollingAvg(l, base.date)) / (days / 7);
+    const lastD = last.date, ref = l.filter(e => dayNum(lastD) - dayNum(e.date) >= 21), base = ref.length ? ref[ref.length - 1] : l[0], days = daysBetween(base.date, lastD);
+    if (days >= 7) rate = (A.get(lastD) - A.get(base.date)) / (days / 7);
   }
   const toGo = lb ? st.goalWeight - lb.avg : null;
   let h = `<header class="top"><div><h1>Body</h1><div class="sub num">${st.kcal} kcal · ${st.protein} g protein · gain 0.5–0.75 ${U()}/wk</div></div></header>`;
@@ -1463,7 +1529,7 @@ function viewBody() {
     <div class="tile"><div class="k">Rate</div><div class="v" style="color:${rate == null ? "inherit" : rate >= 0.5 && rate <= 0.75 ? "var(--good)" : rate > 1 || rate < 0.25 ? "var(--bad)" : "var(--warn)"}">${rate == null ? "–" : (rate >= 0 ? "+" : "") + fmtNum(Math.round(rate * 100) / 100)}</div><div class="d">${rate == null ? "needs 1+ week" : rate < 0.5 ? `${U()}/wk · eat a bit more` : rate > 0.75 ? `${U()}/wk · a bit fast` : `${U()}/wk · on target`}</div></div>
     <div class="tile"><div class="k">To goal</div><div class="v">${toGo == null ? "–" : fmtNum(Math.max(0, toGo))}</div><div class="d">${toGo != null && toGo > 0 ? `≈ ${Math.ceil(toGo / 0.625)} wks` : "goal " + st.goalWeight}</div></div></div>`;
   if (l.length) {
-    const range = ui.bodyRange, A = avg7Map(l);
+    const range = ui.bodyRange;
     const vis = inRange(l.map(e => ({ x: e.date, y: e.lb })), range), tw = thin(vis, "avg");
     const series = tw.level === "day" ? [{ name: "Daily", color: "var(--faint)", pts: vis, dotsOnly: true, r: vis.length > 200 ? 1.6 : 2.5 }, { name: "7-day avg", color: "var(--accent)", pts: vis.map(p => ({ x: p.x, y: A.get(p.x) })), width: 2.5, area: true }]
       : [{ name: tw.level === "week" ? "Weekly avg" : "Monthly avg", color: "var(--accent)", pts: tw.pts, width: 2.5, area: true }];
@@ -1537,6 +1603,7 @@ function renderEditEx() {
     <div class="grow"><label class="lbl" for="eeMax">Reps max (go up)</label><input id="eeMax" class="field num" inputmode="numeric" data-ee="repMax" value="${e.repMax}"></div></div>
     <div class="row" style="gap:10px;align-items:flex-end"><div class="grow"><label class="lbl" for="eeRest">Rest (sec)</label><input id="eeRest" class="field num" inputmode="numeric" data-ee="restSec" value="${e.restSec}"></div>
     <div class="grow"><label class="lbl" for="eeInc">Weight jump (${U()})</label><input id="eeInc" class="field num" inputmode="decimal" data-ee="inc" value="${e.inc ?? ""}" placeholder="default ${S.settings.increment}"></div></div>
+    ${(e.kind || "weight") === "weight" ? `<label class="lbl" for="eeNext">Next time only (${U()})</label><input id="eeNext" class="field num" inputmode="decimal" data-ee="nextW" value="${e.nextW ?? ""}" placeholder="Leave empty to follow the coaching">` : ""}
     <div class="row" style="margin-top:14px;gap:10px"><button class="cb ${e.perSide ? "on" : ""}" data-act="eePerSide" aria-label="Per side">${e.perSide ? I.checkSm : ""}</button><span class="small">Reps are per leg / per side</span></div>
     <label class="lbl">Sets</label>
     ${e.sets.map((s, i) => `<div class="set-edit"><span class="muted small" style="text-align:center">${i + 1}</span>
@@ -1557,6 +1624,7 @@ function readEE() {
     else if (k === "cues") e.cues = v.split("\n").map(x => x.trim()).filter(Boolean);
     else if (["repMin", "repMax", "restSec"].includes(k)) e[k] = Math.max(0, parseInt(v, 10) || 0);
     else if (k === "inc") e.inc = parseFloat(v) > 0 ? parseFloat(v) : null;
+    else if (k === "nextW") { if (parseFloat(v) > 0) e.nextW = parseFloat(v); else delete e.nextW; }
     else e[k] = v;
   });
   overlay.querySelectorAll("[data-es]").forEach(el => { e.sets[Number(el.dataset.es)][el.dataset.k] = el.value; });
@@ -1624,21 +1692,35 @@ function toast(msg) { let el = document.querySelector(".toast"); if (!el) { el =
 function timerHTML() {
   if (!timer) return "";
   const left = Math.round((timer.end - Date.now()) / 1000), over = left <= 0, t = Math.abs(left);
-  return `<div class="timer ${over ? "over" : ""}" id="timer"><span>${over ? "Go · +" : "Rest "}${mmss(t)}</span>${over ? "" : `<button data-act="tAdd" data-s="-10">−10</button>`}<button data-act="tAdd" data-s="10">+10</button><button data-act="tStop">${over ? "Dismiss" : "Skip"}</button></div>`;
+  return `<div class="timer ${over ? "over" : ""}" id="timer"><span>${over ? "Go · +" : "Rest "}${mmss(t)}</span>${over ? "" : `<button data-act="tAdd" data-s="-10">−10</button>`}<button data-act="tAdd" data-s="10">+10</button><button data-act="tStop">${over ? "Dismiss" : "Skip"}</button>${over ? "" : `<i class="tline" style="width:${Math.min(100, (1 - (timer.end - Date.now()) / (timer.total || 1)) * 100).toFixed(1)}%"></i>`}</div>`;
 }
 let buzzed = false, lastSeg = -1;
+/* The rest timer is kept with the workout, so it survives the phone reloading the app in the background. */
+const setTimer = t => { timer = t; if (draft) { draft.rest = t; saveDraft(); } };
+if (draft && draft.rest && draft.rest.end > Date.now() - 120000) { timer = draft.rest; buzzed = timer.end <= Date.now(); }
+/* Update a ticking widget in place (text, styles, classes) so its bars glide and nothing flickers; rebuild only when its layout changes. */
+function patch(el, html) {
+  const t = document.createElement("template"); t.innerHTML = html.trim();
+  const n = t.content.firstElementChild, a = el.querySelectorAll("*"), b = n ? n.querySelectorAll("*") : [];
+  if (!n || a.length !== b.length) { n ? el.replaceWith(n) : el.remove(); return; }
+  [[el, n], ...[...a].map((x, i) => [x, b[i]])].forEach(([x, y]) => {
+    if (x.tagName !== y.tagName) return;
+    if (!y.children.length && x.textContent !== y.textContent) x.textContent = y.textContent;
+    for (const k of ["class", "style"]) if (x.getAttribute(k) !== y.getAttribute(k)) y.hasAttribute(k) ? x.setAttribute(k, y.getAttribute(k)) : x.removeAttribute(k);
+  });
+}
 setInterval(() => {
   if (hold && !hold.paused) {
     const now = Date.now();
     if (hold.gapUntil) { if (now >= hold.gapUntil) { hold.gapUntil = 0; hold.endAt = now + hold.sec * 1000; alertCue(1); } }
     else if (now >= hold.endAt) { if (hold.side < hold.sides) { hold.side++; hold.gapUntil = now + 5000; alertCue(2); } else finishHold(); }
-    const el = document.getElementById("hold"); if (el && hold) el.outerHTML = holdHTML();
+    const el = document.getElementById("hold"); if (el && hold) patch(el, holdHTML());
   }
   if (timer) {
     const el = document.getElementById("timer"), left = Math.round((timer.end - Date.now()) / 1000);
-    if (left <= 0 && !buzzed) { buzzed = true; if (left > -15000) alertCue(); }
-    if (left < -120) timer = null;
-    if (el) el.outerHTML = timerHTML(); else if (timer) render();
+    if (left <= 0 && !buzzed) { buzzed = true; if (left > -15) alertCue(); }
+    if (left < -120) setTimer(null);
+    if (el) timer ? patch(el, timerHTML()) : el.remove(); else if (timer) render();
   }
   if (draft && draft.type !== "cardio" && !draft.editing) { const el = document.getElementById("elapsed"); if (el) el.textContent = Math.floor((Date.now() - draft.startedAt) / 60000) + " min"; }
   if (draft && draft.type === "cardio" && draft.clock.running) {
@@ -1650,7 +1732,7 @@ setInterval(() => {
       if (ui.segsOpen) render();
     }
     lastSeg = cur.i;
-    const el = document.getElementById("ctimer"); if (el) el.outerHTML = ctimerHTML();
+    const el = document.getElementById("ctimer"); if (el) patch(el, ctimerHTML());
   }
 }, 500);
 
@@ -1691,7 +1773,7 @@ function alertCue(n = 2) {
   try { a.muted = false; a.currentTime = 0; const p = a.play(); if (p) p.catch(() => {}); } catch (e) {}
   beepStop = setTimeout(() => { alerting = false; if (n < 3) a.pause(); }, Math.min(3, Math.max(1, n)) * 300 + 40);
 }
-const startTimer = sec => { if (sec) { timer = { end: Date.now() + sec * 1000 }; buzzed = false; alertCue(1); } };
+const startTimer = sec => { if (sec) { setTimer({ end: Date.now() + sec * 1000, total: sec * 1000 }); buzzed = false; alertCue(1); } };
 let wakeLock = null;
 const wantAwake = () => !!hold || (!!draft && (draft.type !== "cardio" || draft.clock.running));
 async function keepAwake(on) { try { if (on && navigator.wakeLock && !wakeLock) wakeLock = await navigator.wakeLock.request("screen"); else if (!on && wakeLock) { await wakeLock.release(); wakeLock = null; } } catch (e) { wakeLock = null; } }
@@ -1721,7 +1803,7 @@ document.addEventListener("click", ev => {
     case "stretchSave": S.program.stretch = { name: (S.program.stretch || {}).name || "Night Reset", perWeek: Math.max(1, Math.min(7, parseInt(document.getElementById("stPer").value, 10) || 2)), items: parseMob(document.getElementById("stItems").value) }; ui.stretchDone = []; persist("program"); closeModal(); render(); break;
     case "stretchReset": document.getElementById("stItems").value = mobLines(defaultStretch().items); document.getElementById("stPer").value = 2; break;
     case "mobToggle": ui.mobOpen = !ui.mobOpen; render(); break;
-    case "mob": draft.mob = draft.mob || []; draft.mob[Number(ds.i)] = !draft.mob[Number(ds.i)]; { const ml = dayById(draft.dayId).mobility || []; if (ml.every((m, i) => (ui.mobQuick && !m.quick) || draft.mob[i])) ui.mobOpen = false; } saveDraft(); render(); break;
+    case "mob": draft.mob = draft.mob || []; draft.mob[Number(ds.i)] = !draft.mob[Number(ds.i)]; { const ml = (dayById(draft.dayId) || {}).mobility || []; if (ml.every((m, i) => (ui.mobQuick && !m.quick) || draft.mob[i])) ui.mobOpen = false; } saveDraft(); render(); break;
     case "holdGo": if (hold && hold.list === ds.l && hold.i === Number(ds.i)) { hold = null; render(); } else startHold(ds.l, Number(ds.i)); break;
     case "holdAdd": if (hold) { const ms = Number(ds.s) * 1000; if (hold.paused) hold.left = Math.max(1000, hold.left + ms); else if (!hold.gapUntil) hold.endAt = Math.max(Date.now() + 1000, hold.endAt + ms); render(); } break;
     case "holdPause": if (hold) { if (hold.paused) { hold.endAt = Date.now() + hold.left; hold.paused = false; } else { hold.left = Math.max(0, hold.endAt - Date.now()); hold.paused = true; } render(); } break;
@@ -1738,8 +1820,8 @@ document.addEventListener("click", ev => {
     case "expand": ui.expanded[ei] = true; if (ui.collapsed) delete ui.collapsed[ei]; render(); break;
     case "collapse": ui.collapsed = ui.collapsed || {}; ui.collapsed[ei] = true; ui.expanded[ei] = false; render(); break;
     case "goDay": ui.view = "calendar"; ui.calMode = "month"; ui.calSel = ds.d; ui.calMonth = ds.d.slice(0, 7); render(); window.scrollTo(0, 0); break;
-    case "int": { const s = draft.exercises[ei].sets[si]; s.int = INTS[(INTS.indexOf(shownInt(s.int)) + 1) % 3]; saveDraft(); render(); break; }
-    case "done": { const dex = draft.exercises[ei], s = dex.sets[si]; s.done = !s.done; if (dex.sets.every(x => x.done)) ui.expanded[ei] = false; if (s.done && s.r === "" && s.ph !== "" && s.ph != null) s.r = String(s.ph); if (s.done && S.settings.autoTimer) startTimer(tmplFor(dex).restSec); saveDraft(); render(); break; }
+    case "int": { const s = draft.exercises[ei].sets[si], opts = draft.bjjHard ? INTS.slice(0, 2) : INTS; s.int = opts[(opts.indexOf(shownInt(s.int)) + 1) % opts.length]; saveDraft(); render(); break; }
+    case "done": { const dex = draft.exercises[ei], s = dex.sets[si]; s.done = !s.done; if (s.done) draft.lastAt = Date.now(); if (dex.sets.every(x => x.done)) ui.expanded[ei] = false; if (s.done && s.r === "" && s.ph !== "" && s.ph != null) s.r = String(s.ph); if (s.done && S.settings.autoTimer) startTimer(tmplFor(dex).restSec); saveDraft(); render(); break; }
     case "addSet": { const sets = draft.exercises[ei].sets, l = sets[sets.length - 1]; sets.push({ w: l ? l.w : "", r: "", ph: l ? l.ph : "", int: l ? l.int : "Moderate", note: "", done: false }); saveDraft(); render(); break; }
     case "rmSet": draft.exercises[ei].sets.pop(); saveDraft(); render(); break;
     case "finish": {
@@ -1749,8 +1831,8 @@ document.addEventListener("click", ev => {
       break;
     }
     case "discard": ask(draft.editing ? "Stop editing? Changes won't be saved." : "Discard this session?", draft.editing ? "Stop editing" : "Discard", () => { draft = null; timer = null; saveDraft(); keepAwake(false); render(); }); break;
-    case "tAdd": if (timer) { const now = Date.now(); timer.end = Math.max(timer.end, now) + Number(ds.s) * 1000; if (timer.end > now) buzzed = false; render(); } break;
-    case "tStop": timer = null; render(); break;
+    case "tAdd": if (timer) { const now = Date.now(); timer.end = Math.max(timer.end, now) + Number(ds.s) * 1000; timer.total = Math.max(timer.total || 0, timer.end - now); if (timer.end > now) buzzed = false; setTimer(timer); render(); } break;
+    case "tStop": setTimer(null); render(); break;
     case "cToggle": { const c = draft.clock; if (c.running) { c.acc += Date.now() - c.since; c.running = false; keepAwake(false); } else { c.since = Date.now(); c.running = true; lastSeg = segAt(dayById(draft.dayId), clockSec()).i; alertCue(); keepAwake(true); } saveDraft(); render(); break; }
     case "cReset": draft.clock = { running: false, acc: 0, since: 0 }; lastSeg = -1; saveDraft(); keepAwake(false); render(); break;
     case "cSkip": { const d = dayById(draft.dayId), cur = segAt(d, clockSec()); if (!cur.s) break; const c = draft.clock; c.acc = (cur.start + cur.s.sec) * 1000; if (c.running) c.since = Date.now(); saveDraft(); render(); break; }
@@ -1765,7 +1847,7 @@ document.addEventListener("click", ev => {
       break; }
     case "yearNav": ui.calYear += Number(ds.dir); render(); break;
     case "openYear": ui.calYear = Number(ds.y); ui.calMode = "year"; render(); break;
-    case "delSess": { closeModal(); const id = ds.id; ask("Delete this session? This can't be undone.", "Delete", () => { S.sessions = S.sessions.filter(s => s.id !== id); persist("removeSession", id); render(); }); break; }
+    case "delSess": { closeModal(); const id = ds.id; ask("Delete this session? This can't be undone.", "Delete", () => { S.sessions = S.sessions.filter(s => s.id !== id); if (draft && draft.id === id) { draft = null; timer = null; saveDraft(); } persist("removeSession", id); render(); }); break; }
     case "editSess": {
       closeModal(); const id = ds.id;
       const go = () => {
@@ -1779,6 +1861,7 @@ document.addEventListener("click", ev => {
             durationMin: s.durationMin, finishedAt: s.finishedAt, baseline: s.baseline, warm: [],
             exercises: s.exercises.map(e => { const t = findTmpl(s.dayId, e.name); return { tid: t ? t.id : null, name: e.name, sets: e.sets.map(x => ({ w: x.w ?? "", r: x.r ?? "", ph: "", int: x.int, note: x.note || "", done: x.done })) }; }) };
         }
+        ui.cuesOpen = {}; ui.expanded = {}; ui.collapsed = {}; ui.mobCue = {};
         saveDraft(); ui.view = "today"; render(); window.scrollTo(0, 0);
       };
       if (draft) ask("You have a session in progress. Replace it with this one?", "Replace", go); else go();
@@ -1834,26 +1917,43 @@ document.addEventListener("click", ev => {
       download(`lift-log-${todayISO()}.csv`, rows.map(r => r.map(c => /[",\n]/.test(String(c)) ? `"${String(c).replace(/"/g, '""')}"` : c).join(",")).join("\n"), "text/csv"); break;
     }
     case "import": document.getElementById("importFile").click(); break;
-    case "resetProgram": ask("Reset the program to the original plan? Your logged history stays.", "Reset", () => { S.program = defaultProgram(); persist("program"); render(); toast("Program reset"); }); break;
+    case "resetProgram": ask("Reset the program to the original plan? Your logged history stays.", "Reset", () => { S.program = defaultProgram(); migrate(); persist("program"); render(); toast("Program reset"); }); break;
   }
 });
 document.addEventListener("focusin", ev => { const el = ev.target; if (el.matches && el.matches(".set input, [data-cl], #bwVal")) setTimeout(() => { try { el.select(); } catch (e) {} }, 0); });
+/* Digits and at most one decimal point ("," counts as one), so a typo can't save a broken number. */
+const cleanNum = v => { const [a, ...b] = String(v).replace(/,/g, ".").replace(/[^0-9.]/g, "").split("."); return b.length ? a + "." + b.join("") : a; };
 document.addEventListener("input", ev => {
   const el = ev.target;
   if (!draft) return;
-  if (el.dataset.k && el.dataset.ei != null && draft.exercises) { draft.exercises[Number(el.dataset.ei)].sets[Number(el.dataset.si)][el.dataset.k] = el.value.replace(",", ".").replace(/[^0-9.]/g, ""); saveDraft(); }
-  else if (el.dataset.cl && draft.log) { const k = el.dataset.cl; draft.log[k] = k === "machine" ? el.value : el.value.replace(",", ".").replace(/[^0-9.]/g, ""); saveDraft(); }
-  else if (el.dataset.f) { draft[el.dataset.f] = el.value; saveDraft(); }
+  if (el.dataset.k && el.dataset.ei != null && draft.exercises) {
+    const ei = Number(el.dataset.ei), si = Number(el.dataset.si), sets = draft.exercises[ei].sets, s = sets[si], v = cleanNum(el.value);
+    if (el.dataset.k === "w") {
+      const old = String(s.w ?? "");
+      for (let j = si + 1; j < sets.length; j++) {
+        const o = sets[j]; if (o.done || o.own || (String(o.w ?? "") !== old && o.w !== "")) continue;
+        o.w = v; const inp = document.querySelector(`input[data-ei="${ei}"][data-si="${j}"][data-k="w"]`); if (inp) inp.value = v;
+      }
+      s.own = true;
+    }
+    s[el.dataset.k] = v; saveDraft();
+  }
+  else if (el.dataset.cl && draft.log) { const k = el.dataset.cl; draft.log[k] = k === "machine" ? el.value : cleanNum(el.value); saveDraft(); }
+  else if (el.dataset.f && (el.dataset.f !== "date" || /^\d{4}-\d\d-\d\d$/.test(el.value))) { draft[el.dataset.f] = el.value; saveDraft(); }
 });
 document.addEventListener("change", ev => {
   const el = ev.target, a = el.dataset.actChange;
-  if (el.dataset.set) { const v = parseFloat(el.value); if (v > 0) { S.settings[el.dataset.set] = v; persist("body"); } return; }
+  if (el.dataset.set) { const k = el.dataset.set, v = ["increment", "goalWeight"].includes(k) ? parseFloat(el.value) : Math.round(parseFloat(el.value)); if (v > 0) { S.settings[k] = v; persist("body"); } else el.value = S.settings[k]; return; }
   if (el.id === "importFile" && el.files[0]) {
     const r = new FileReader();
     r.onload = () => {
       try {
         const d = JSON.parse(r.result);
-        if (!d.program || !Array.isArray(d.sessions)) throw new Error("bad");
+        if (!d.program || !Array.isArray(d.program.days) || !Array.isArray(d.sessions)) throw new Error("bad");
+        // Skip anything damaged instead of letting one bad row break the app.
+        const okDate = x => typeof x === "string" && /^\d{4}-\d\d-\d\d$/.test(x);
+        d.sessions = d.sessions.filter(s => s && okDate(s.date)).map(s => Object.assign(s, { id: s.id || uid("s"), exercises: (Array.isArray(s.exercises) ? s.exercises : []).filter(e => e && Array.isArray(e.sets)) }));
+        d.bodyweight = (Array.isArray(d.bodyweight) ? d.bodyweight : []).filter(e => e && okDate(e.date) && Number(e.lb) > 0);
         ask(`Import ${d.sessions.length} sessions and ${(d.bodyweight || []).length} weigh-ins? This replaces the data here.`, "Import", () => {
           if (cloud.db) { const ids = new Set(d.sessions.map(s => s.id)); S.sessions.filter(s => !ids.has(s.id)).forEach(s => cloud.removeSession(s.id)); }
           S = Object.assign(defaultState(), d); migrate();
