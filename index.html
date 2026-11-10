@@ -708,11 +708,20 @@ function historyFor(name) {
 }
 function lastFor(name, excludeId) { const h = historyFor(name).filter(x => x.session.id !== excludeId); return h.length ? h[h.length - 1] : null; }
 function setsSummary(e) { return e.sets.filter(x => x.done).map(x => (x.w != null && x.w !== "" && Number(x.w) !== 0 ? `${fmtNum(x.w)}×${x.r ?? "–"}` : `${x.r ?? "✓"}`)).join(" · "); }
+/* Sets done lighter than an earlier set of the same group (a ramp may go up; "Back-off" sets are their own group).
+   A lift only goes up once every set hit the top at the same weight, so these hold it back. */
+function lighterSets(tmpl, sets) {
+  const top = {}, out = [];
+  sets.forEach((x, i) => { if (!x || !x.done) return; const w = Number(x.w); if (!(w > 0)) return;
+    const g = /back/i.test(((tmpl.sets && tmpl.sets[i]) || {}).note || x.note || "") ? "b" : "w";
+    if (w < (top[g] || 0)) out.push(i); else top[g] = w; });
+  return out;
+}
 function readyToProgress(tmpl, logged) {
   if (!logged || tmpl.kind === "check") return false;
   const done = logged.sets.filter(x => x.done);
   if (done.length < tmpl.sets.length) return false;
-  return done.every(x => Number(x.r) >= tmpl.repMax);
+  return done.every(x => Number(x.r) >= tmpl.repMax) && !lighterSets(tmpl, logged.sets).length;
 }
 function topSet(e) {
   let best = null;
@@ -1191,7 +1200,8 @@ function exerciseCard(dex, ei) {
   const inc = incFor(t);
   const doneNow = dex.sets.filter(s => s.done);
   const need = t.repMax;
-  const allTopNow = coach && doneNow.length >= dex.sets.length && doneNow.every(s => Number(s.r || s.ph) >= need);
+  const repsTopNow = coach && doneNow.length >= dex.sets.length && doneNow.every(s => Number(s.r || s.ph) >= need), lightNow = repsTopNow ? lighterSets(t, dex.sets) : [];
+  const allTopNow = repsTopNow && !lightNow.length;
   const [lowNow, shortNow] = coach ? dropCount(doneNow, t) : [0, 0];
   const allDone = doneNow.length === dex.sets.length && dex.sets.length;
   // sets under the range: no drop on a new weight or while reps are still climbing, and nothing is called until the lift is finished
@@ -1226,6 +1236,7 @@ function exerciseCard(dex, ei) {
   if (belowNow) h += `<div class="hint down">${I.down}<span>${pl(belowNow, "set")} under ${dropFloor(t)} reps today. Every set drops ${fmtNum(inc)} ${U()} next time.</span></div>`;
   else if (stay) h += `<div class="rule">${I.up}<span>${pl(lowNow, "set")} under ${dropFloor(t)} reps. ${stay === "new" ? "That's normal on a new weight." : "But you added reps, so it's working."} Same weight next time, one more rep on each set.</span></div>`;
   else if (shortNow && allDone) h += `<div class="rule">${I.up}<span>${pl(shortNow, "set")} a little short. Keep the weight. Next time each set aims for one more rep, up to ${need}.</span></div>`;
+  else if (lightNow.length) h += `<div class="rule">${I.up}<span>Every set at ${need}, but ${lightNow.length === 1 ? `set ${lightNow[0] + 1} was` : `sets ${lightNow.map(i => i + 1).join(" and ")} were`} lighter. Next time every set gets the same weight; go up once they all hit ${need} at it.</span></div>`;
   else if (allTopNow) h += `<div class="hint">${I.check}<span>Every set at ${need}. ${bigJump(t) ? `Next time pick: +${fmtNum(inc)} ${U()}, more reps, or an extra set.` : `Add ${fmtNum(inc)} ${U()} next time.`}</span></div>`;
   h += `<div class="sets" data-key="sets"><div class="set ${cls}"><span></span>${kind === "weight" ? `<span class="hdr">${U()}</span><span></span>` : ""}${kind !== "check" ? `<span class="hdr">${t.unit === "s" ? "Seconds" : "Reps"}</span><span class="hdr">Effort</span>` : `<span></span>`}<span></span></div>`;
   dex.sets.forEach((s, si) => {
@@ -1238,7 +1249,7 @@ function exerciseCard(dex, ei) {
     h += `<button class="done-btn ${s.done ? "on" : ""}" data-act="done" data-ei="${ei}" data-si="${si}" aria-label="Set done">${I.check}</button></div>`;
   });
   h += `</div><div class="row" style="margin-top:8px;gap:4px"><button class="btn ghost sm" data-act="addSet" data-ei="${ei}">${I.plus} Set</button>${dex.sets.length > 1 ? `<button class="btn ghost sm" data-act="rmSet" data-ei="${ei}">${I.minus} Set</button>` : ""}
-    ${dex.sets.some(s => s.note) ? `<span class="faint tiny" style="margin-left:auto">* ${esc(dex.sets.find(s => s.note).note)}</span>` : ""}</div></div>`;
+    ${dex.sets.some(s => s.note) ? `<span class="faint tiny" style="margin-left:auto;text-align:right">* ${(() => { const i = dex.sets.findIndex(s => s.note), n = dex.sets[i].note; return /back/i.test(n) ? `Set ${i + 1} is a back-off set: lighter on purpose` : esc(n); })()}</span>` : ""}</div></div>`;
   return h;
 }
 function finishSession() {
